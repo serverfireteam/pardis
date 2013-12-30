@@ -1,0 +1,8 @@
+Naming Conventions :
+
+1) All php variables should start with small letters.
+2) Control statements should have one space between the control keyword and opening parenthesis, to distinguish them from function calls.
+3) Always use curly braces even in situations where they are technically optional. Having them increases readability and decreases the likelihood of logic errors being introduced when new lines are added.
+4) Functions should be called with no spaces between the function name, the opening parenthesis, and the first parameter; spaces between commas and each parameter, and no space between the last parameter, the closing parenthesis, and the semicolon.
+5) Arrays should be formatted with a space separating each element (after the comma), and spaces around the => key association operator.
+6) String Concatenations : Always use a space between the dot and the concatenated parts to improve readability.

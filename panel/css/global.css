@@ -1,0 +1,316 @@
+/* http://meyerweb.com/eric/tools/css/reset/ */
+/* v1.0 | 20080212 */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+	font:tahoma;
+	font-size:11px;
+}
+body {
+	line-height: 1;
+	
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.files{
+	position: relative;
+	text-align: right;
+	-moz-opacity:0 ;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+}
+
+.fakefile {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+}
+
+/*     END        */
+body, td, th {
+    font-family: tahoma;
+    font-size: 10px;
+	text-align:right;
+}
+body * {
+	line-height:1.22em;
+}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+}
+a:active {
+	text-decoration: none;
+}
+.ui-tabs .ui-tabs-hide { display: none; }
+#page {
+	margin:0 auto;
+	min-width:950px;
+	width:950px;
+	position:relative;
+}
+ul#3dgroup li{
+text-align:center;
+}
+ul#category li {
+float: none;
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:2px;
+padding:4px 0;
+position:relative;
+}
+ul#showfile li {
+float:right;
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:2px;
+padding:4px 0;
+position:relative;
+width:120px;
+height:200px;
+}
+#top-text {
+	height:150px;
+	background:none;
+	border:none;
+	margin-top:5px;
+}
+#head {
+	height:144px;
+	text-align:center;
+}
+#main-button{
+  cursor:pointer;
+  float:right;
+  line-height:1.4em;
+  margin:0.5em 0.4em 0.5em 0;
+  overflow:visible;
+  padding:0.2em 0.6em 0.3em;
+  width:auto;
+  font-family: Arial;
+  font-size: 12px;
+}
+#main-head {
+	width:245px;
+	height:37px;
+	float:right;
+	position:relative;
+	top:11px;
+	right:10px;
+	padding-right:4px;
+	border:1px solid #326A81;
+	background:url(../images/trens-bg.png) repeat;
+}
+#slide-head {
+	width:104px;
+	height:31px;
+	float:left;
+	position:relative;
+	top: 38px; 
+	left: 9px;
+	padding-right:4px;
+	border:1px solid #326A81;
+	background:url(../images/trens-bg.png);
+}
+.ui-widget-overlay_test { 
+background: url(images/blank.gif)50% 50% repeat-x; width:221px; color:#FFFFFF;opacity: .30;filter:Alpha(Opacity=30);
+margin-top:7px;
+font-weight:bolder;
+font-size:23px; }
+.slide-button{
+  cursor:pointer;
+  float:right;
+  line-height:1.4em;
+  margin:0.5em 0.4em 0.5em 0;
+  overflow:visible;
+  padding:0.2em 0.6em 0.3em;
+  width:auto;
+  font-family: Arial;
+  font-size: 10px;
+}
+#left-head {
+	width:947px;
+	height:144px;
+	float:left;
+	position:relative;
+	left:0;
+}
+#list-item li{
+text-align:right;
+    
+}
+
+#sidebar {
+	width:300px;
+	float:right;
+	position:relative;
+	margin-left:5px;
+}
+#sidebar li {
+padding:5px;
+}
+#sidebar ul {
+position:relative;
+}
+#cat-title{
+	float: right;
+	margin-right:5px;
+	font-size:12px;
+	position:relative;
+  font-family: Arial;
+  font-size: 12px;
+}
+#cat-icons{
+	float: right;
+	font-size:12px;
+	position:relative;
+}
+/* new-movies-img */
+.tabs-movies-img{
+    float:left;
+	margin-right:5px;
+}
+#new-movies{
+height:auto;
+min-height:250px;
+}
+.new-movies-button{
+    height:21px;
+	padding-top:10px;
+}
+.new-movies-button a{
+    margin-left:5px;
+}
+#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+ul#icons {margin: 0; padding: 0;}
+ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+ul#icons span.ui-icon {float: left; margin: 0 4px;}
+/* ---------------------------------------------------------------
+Clearfix
+--------------------------------------------------------------- */
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+.clearfix {display: inline-block;}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
+#li-top{
+	border-top:0 none;
+	border-left:0 none;
+	border-right:0 none;
+	height:13px;
+}
+
+
+.mg {
+	margin:0 0 10px;
+	position:relative;
+}
+#top-text ul {
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	height:67px;
+	width:100%
+}
+#top-text li {
+	display: inline;
+	margin:0;
+	padding:0;
+	font-size:120%;
+	line-height:1.3em;
+	margin:0 2px 0 0;
+}
+img {
+	border:0;
+}
+li{
+list-style-type:none;
+}
+
+#content #insert-tabel1 tr{
+height:30px;
+}
+#content #insert-tabel1 td{width:150px;}
+#content #insert-tabel1{margin: 0 auto; direction:ltr}
+#content #insert-submit{cursor: pointer;}
+jqplot-cursor-legend {width: 160px;font-family: "Courier New";font-size: 0.85em; }
+td.jqplot-cursor-legend-swatch { width: 1.3em;  }
+div.jqplot-cursor-legend-swatch {/*      width: 15px;*/	  }
+.ui-autocomplete { position: absolute; cursor: default;-moz-box-shadow: 0 1px 5px #CCCCCC;background:#EEEEEE; border-color:#AAA9A2; border-style: none solid solid; border-width: medium 1px 1px;cursor: default; position: absolute;box-shadow: 0 1px 5px #CCCCCC;  }	
+
+* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+
+.ui-menu {list-style:none;padding: 2px;	margin: 0;	display:block;	float: left}
+.ui-menu .ui-menu {	margin-top: -3px}
+.ui-menu .ui-menu-item {margin:0;padding: 0;zoom: 1;float: left;clear: left;width: 100%}
+.ui-menu .ui-menu-item:hover ,.ui-menu .ui-menu-item a:hover { background:#EBEBEB; color:#0066FF}
+.ui-menu .ui-menu-item a {text-decoration:none;display:block;padding:.2em .4em;	line-height:1.5;zoom:1}
+.ui-menu .ui-menu-item a.ui-state-hover,
+.ui-menu .ui-menu-item a.ui-state-active {font-weight: normal;margin: -1px}
+#searchprovide{ display:none}
