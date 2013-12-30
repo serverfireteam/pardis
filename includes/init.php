@@ -21,7 +21,7 @@
 
  /* lang */
  include __SITE_PATH . '/application/' . 'lang_fn.php';
- include __SITE_PATH .'/lang/it.php';
+ include __SITE_PATH .'/lang/en.php';
  
  /*** auto load model classes ***/
  function __autoload($class_name) {

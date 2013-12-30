@@ -92,7 +92,8 @@
 
 				$name    = $_GET['name'];
 				$subname = $_GET['subname'];
-				foreach ($link_list as $key => $value) { ?>
+				if (!empty($link_list)) {
+					foreach ($link_list as $key => $value) { ?>
 		        	<li>
 	                    <? if ($key == $name) { ?>
 	                        <a href="#" class="nav-top-item current"><?=$key;?></a>
@@ -113,7 +114,7 @@
 							} ?>
 						</ul>
 					</li>
-				<? } ?>
+				<? } } ?>
 			</ul> <!-- End #main-nav -->			
 
 		</div>
