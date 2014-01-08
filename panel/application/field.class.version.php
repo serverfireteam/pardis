@@ -19,6 +19,7 @@ class field {
 	var $successfull   = '';
 	var $help          = array();
 
+	// {{{ __construct
     function __construct($method, $action, $source, $columns, $k_sort) {
 
 		$this->db 		   = db::getInstance();
@@ -30,20 +31,22 @@ class field {
 		$this->error       = '';
 		$this->successfull = '';
 	}
-
-	// fix bug for quote
+	// }}}
+	// {{{ fixSlashes : fix bug for quote
 	function fixSlashes() {
 		foreach ($_POST as $key => $value) {
 			$_POST[$key] = addslashes($value);
 		}
 	}
-
+	// }}}
+	// {{{ check_table
 	function check_table() {
 		$table_name = $this->source;
 		$value	    = $this->field;
 		$index	    = 0;
 
-		$m_query = "CREATE TABLE IF NOT EXISTS `$table_name`(`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY";
+		$m_query  = "CREATE TABLE IF NOT EXISTS `$table_name`(`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY";
+		$m_query .= ", `order` INT NOT NULL";
 		while ($index < count($this->field['name'])) {
 			if (($value['type'][$index] == 'text' and ($value['maxlen'][$index] == 'disable' or $value['maxlen'][$index] == '')) or
 			    ($value['type'][$index] == 'img') or ($value['type'][$index] == 'droplist1') or ($value['type'][$index] == 'tag')) {
@@ -54,7 +57,6 @@ class field {
 					$length     = $value['maxlen'][$index];
 			} else if ($value['maxlen'][$index] > 250 or $value['type'][$index] == 'textarea') {
 					$field_type = 'longtext';
-					// $length = $value['maxlen'][$index];
 			} else {
 					$field_type = 'varchar';
 			}
@@ -76,8 +78,8 @@ class field {
 		$stmt     = $this->db->prepare($m_query);
 		$stmt->execute();
 	}
-
-	// Process based on the current action
+	// }}}
+	// {{{ a : Process based on the current action
     function a() {
 
 		$this->check_table();
@@ -116,10 +118,14 @@ class field {
 				break;
 			case('autocomplete') :
 				$this->autocomplete();
-				break;				
+				break;
+			case('updateRowOrder') :
+				$this->updateRowOrder();
+				break;
 		}
 	}
-
+	// }}}
+	// {{{ autocomplete
 	function autocomplete() {
 
 		$utf = $this->db->prepare('SET NAMES utf8');
@@ -139,7 +145,8 @@ class field {
 			exit;
 		}
 	}
-
+	// }}}
+	// {{{ pagging
 	function pagging() {
 
 		$utf = $this->db->prepare('SET NAMES utf8');
@@ -169,9 +176,9 @@ class field {
 		$group = $_GET['group'];
 		if ($group != '' or $group != 0) {
 			$where = ($_GET['group'] == '' or $_GET['group'] == 'last') ? '' : "where `$long_record_name` = $_GET[group]";
-			$q     = "select * from `$this->source` $where";
+			$q     = "select * from `$this->source` $where order by `order`";
 		} else {
-			$q = "select * from `$this->source`";
+			$q = "select * from `$this->source` order by `order`";
 		}
 
 		$r = $this->db->prepare($q);
@@ -257,18 +264,18 @@ class field {
 		if ($group != '') {
 			if ($long_record_name != '') {
 				$where   = ($_GET['group'] == '' or $_GET['group'] == 'last') ? '' : "where `$long_record_name` = $_GET[group]";
-				$myquery = "select * from `$this->source` $where limit $start,$end";
+				$myquery = "select * from `$this->source` $where order by `order` limit $start,$end";
 			} else {
 				if (is_array($where)) {
 					$where_str = 'where '. join(" and ", $where);
 				}
-				$myquery = "select * from `$this->source` ".$condition." $where_str limit $start,$end";
+				$myquery = "select * from `$this->source` ".$condition." $where_str order by `order` limit $start,$end";
 			}
 		} else {
 			if (is_array($where)) {
 				$where_str = 'where '. join(" and ", $where);
 			}
-			$myquery = "select * from `$this->source` $where_str limit $start,$end";
+			$myquery = "select * from `$this->source` $where_str order by `order` limit $start,$end";
 		}
 
 		$stmt = $this->db->prepare($myquery);
@@ -283,12 +290,15 @@ class field {
 		}
 
 		while ($re = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$show_pardis .= '<tr><td><input type="checkbox" checkbox-id="'.$re['id'].'" /></td>';
+			$show_pardis .= '<tr>';
+			$show_pardis .= '<input type="hidden" name="order" value="' . $re['order'] . '" />';
+			$show_pardis .= '<td><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>';
+			$show_pardis .= '<td><input type="checkbox" checkbox-id="'.$re['id'].'" /></td>';
 			foreach ($arr as $i => $v) {
 				foreach ($re as $ii => $value) {
 					if ($v === $ii) {
 						if ($check_img == true && $i == $img_idx && $value != '') {
-							$show_pardis .= '<td ><img name="kk" src="'.img::check_img('../'.$value,100,100,'../resize/').
+							$show_pardis .= '<td><img name="kk" src="'.img::check_img('../'.$value,100,100,'../resize/').
 											'" width="100px" height="100px"/></td>';
 						} else {
 							if (mb_strlen($value) > 100) {
@@ -332,8 +342,8 @@ class field {
 		echo ($show_pardis);
 		exit;
 	}
-
-	// show_insert
+	// }}}
+	// {{{ show_insert
 	function show_insert() {
 
 		$show_list_pardis   = $this->show_list();
@@ -357,8 +367,8 @@ class field {
 						  '</div> <!-- End .content-box -->' .
 						  '<div class="clear"></div>';							
 	}
-
-    // addfield
+	// }}}
+    // {{{ addfield
     function addfield($Label = '', $name = '', $type = '', $value = NULL, $maxlen = 50, $array_of_member = '', $empty = true, $option = 'string',
 				      $long_record = 'none', $upload_img = 'null') {
 
@@ -384,8 +394,8 @@ class field {
 		$this->field['upload_img'][]  = $upload_img;
 		$this->array_member[$name]    = $array_of_member;
 	}
-
-	// showform
+	// }}}
+	// {{{ showform
     function showform() {
 
 	    switch ($this->action) {
@@ -689,7 +699,8 @@ class field {
 
 		return $form_pardis;
 	}
-
+	// }}}
+	// {{{ func_insert
 	function func_insert() {
 
 			$t                = '';
@@ -850,7 +861,7 @@ class field {
 							$filepath = $filename . '.'.$ext;
 							$target = "../upload/".$filepath ;
 							if( in_array($ext,array('php','php5','exe','cgi','php4'))){
-								$this->error .='You are not allowed to file.<a href="javascript:history.back(-1);">Back</a> <br>';
+								$this->error .='You are not allowed to file. <a href="javascript:history.back(-1);">Back</a> <br>';
 								exit;
 							}
 							move_uploaded_file($source, $target);
@@ -935,7 +946,7 @@ class field {
 								if($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'email'){
 									$chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
 									if($chek_mail == false)
-										$this->error .= 'Please enter a valid email address  <a href="javascript:history.back(-1);">Back</a>';
+										$this->error .= 'Please enter a valid email address.  <a href="javascript:history.back(-1);">Back</a>';
 								}
 								if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {
 									$utf = $this->db->prepare('SET NAMES utf8');
@@ -964,366 +975,396 @@ class field {
 								if($v == 'password'){
 									$val_insert.= '\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\'';
 									$u         .='`'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\'';
-									if (array_key_exists($i+2, $this->field['type'])){
-										$u .= ' and ';
-										$val_insert.= ',';
+									if (array_key_exists($i+2, $this->field['type'])) {
+										$u 			.= ' and ';
+										$val_insert .= ',';
 									}
-								}else{
-									if($v == 'text' and $this->array_member == 'email'){
+								} else {
+									if ($v == 'text' and $this->array_member == 'email') {
 										$chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
-										if($chek_mail == false)
-											$this->error .= ' Please enter a valid email address<a href="javascript:history.back(-1);">Back</a>';
+										if ($chek_mail == false) {
+											$this->error .= ' Please enter a valid email address. <a href="javascript:history.back(-1);">Back</a>';
+										}
 									}
-									if($v =='text' and $this->array_member[$this->field['name'][$i]] == 'control'){
-										$utf       = $this->db->prepare('SET NAMES utf8');
+									if ($v =='text' and $this->array_member[$this->field['name'][$i]] == 'control') {
+										$utf = $this->db->prepare('SET NAMES utf8');
 										$utf->execute();
-										$m_query="select ".$this->field['name'][$i]."from $this->source where `".$this->field['name'][$i]."`='".$_POST[$temp]."'";
-										$stmt      = $this->db->prepare($m_query);
-										$stmt ->execute();
-										$result    = $stmt->fetch(PDO::FETCH_ASSOC);
-										if($result == ''){
+										$m_query = "select " . $this->field['name'][$i] . "from $this->source where `" .
+												   $this->field['name'][$i] . "`='" . $_POST[$temp] . "'";
+										$stmt    = $this->db->prepare($m_query);
+										$stmt->execute();
+										$result = $stmt->fetch(PDO::FETCH_ASSOC);
+										if ($result == '') {
 											$this->error .= 'This username is available ! <a href="javascript:history.back(-1);">Back</a>'; 
 											$control = false;
 										}
 									}
-									$u.='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-									$val_insert .= '\''.$_POST[$temp].'\'';
+									$u			.= '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+									$val_insert .= '\'' . $_POST[$temp] . '\'';
 								}
-								if($_POST[$temp] == ''){
-								if($this->being_empty[$i] == 0)
-									$chek_empty = true;	
+								if ($_POST[$temp] == '') {
+									if ($this->being_empty[$i] == 0) {
+										$chek_empty = true;
+									}
+								}
 							}
-							}						
 						}
 						$count++;
 						break;
 				}
 			}// end foreach
-			
-			$utf        = $this->db->prepare('SET NAMES utf8');			
-			$utf->execute();	
-	
-			if($check_stick == true){ 
-				if($check_submit == true)
-					$t = substr($t,0,-1);
-				$m_query    = "select ".$t." from `$this->source` where ".$u.$stick_select ; 
-			}else
-				$m_query    = "select ".$t." from `$this->source` where ".$u;
-				
-				$stmt       = $this->db->prepare($m_query);				
-   				$stmt->execute();
-   				$result     = $stmt->fetch(PDO::FETCH_ASSOC);
-				
-				if($result != ''){ 
-					if($check_size == true)
-						$this->error .= 'These records are available<a href="javascript:history.back(-1);">Back</a>';
-					else
-						$this->error .= 'Please select a photo with less volume<a href="javascript:history.back(-1);">Back</a>';
-				}else{
-					
+
+			$utf = $this->db->prepare('SET NAMES utf8');
+			$utf->execute();
+
+			if ($check_stick == true) {
+				if ($check_submit == true) {
+					$t = substr($t, 0, -1);
+				}
+				$m_query = "select " . $t . " from `$this->source` where " . $u . $stick_select;
+			} else {
+				$m_query = "select " . $t . " from `$this->source` where " . $u;
+			}
+			$stmt = $this->db->prepare($m_query);
+			$stmt->execute();
+   			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+			if ($result != '') {
+				if ($check_size == true) {
+					$this->error .= 'These records are available. <a href="javascript:history.back(-1);">Back</a>';
+				} else {
+					$this->error .= 'Please select a photo with less volume. <a href="javascript:history.back(-1);">Back</a>';
+				}
+			} else {
+
 					if ($chek_empty == false && $invalid_file == false) {
-						if($chek_mail == true and $control == true){
-							if($q==0 && $check_size == true){								
+						if ($chek_mail == true and $control == true) {
+							if ($q == 0 && $check_size == true) {
 								$myquery = "insert into `$this->source` (".$t.") values (".$val_insert.")";
-								if($check_stick == true)   
+								if ($check_stick == true) {
 									$myquery = "insert into `$this->source` (".$t.$stick_insert.") values (".$val_insert.$stick_insert_val.")";
+								}
 								$stmt = $this->db->prepare($myquery);
 								$bool = $stmt->execute();
-									
-								if($bool == 1)								  
-									$this->successfull .= 'The record was successfully added  <a href="javascript:history.go(-1);"> Back </a>';
-								else
-									$this->error .= 'Unfortunately it is not possible to add this record  <a href="javascript:history.back(-1);">Back</a>';
+
+								if ($bool == 1) {
+									$insertedId   = $this->db->lastInsertId();
+									$setOrder     = "update `$this->source` set `order` = " . $insertedId . " where `id` = " . $insertedId;
+									$setOrderStmt = $this->db->prepare($setOrder);
+									$orderResult  = $setOrderStmt->execute();
+									if ($orderResult == 1) {
+										$this->successfull .= 'The record was successfully added.  <a href="javascript:history.go(-1);"> Back </a>';
+									} else {
+										$deleteRow = "delete from `$this->source` where id = " . $insertedId;
+										$deleteRowStmt = $this->db->prepare($deleteRow);
+										$deleteRowStmt->execute();
+										$this->error .= 'Unfortunately it is not possible to add this record.  <a href="javascript:history.back(-1);">Back</a>';
+									}
+								} else {
+									$this->error .= 'Unfortunately it is not possible to add this record.  <a href="javascript:history.back(-1);">Back</a>';
+								}
 							} else if ($check_size == true) {
-								$this->error .= 'Please fill in fields carefully  <a href="javascript:history.back(-1);">Back</a>';								 }
-						} 
+								$this->error .= 'Please fill in fields carefully.  <a href="javascript:history.back(-1);">Back</a>';
+							}
+						}
 					} else if ($invalid_file == false) {
-						$this->error .= 'Please fill the required fields  <a href="javascript:history.back(-1);">Back</a>';
+						$this->error .= 'Please fill the required fields.  <a href="javascript:history.back(-1);">Back</a>';
 					}
-				}
-			
 			}
-			//................................................................................................
-			function show_list(){
-				$check_show_img = false;
-			  	$check_img = false;
-			  	$condition = '';
-			  	$img_name = '';
-			  	$scr ='';
-				$long_record_name = '';
-				$checkbox_fild_name = '';
-				//................................my query.....................
-				$myquery    = "select * from `$this->source`";				
-				$r       = $this->db->prepare($myquery);
-				$r->execute();				
-				$result=$r->fetchAll(PDO::FETCH_ASSOC);
-				$count_records=count($result);	
-				
-			  	foreach($this->field['name'] as $i => $val){
-				  	if($val == 'condition'){
-				  		$condition = $this->field['value'][$i];
-				  	}
+		}
+		// }}}
+		// {{{ show_list
+		function show_list() {
+
+			$check_show_img 	= false;
+			$check_img 			= false;
+			$condition 			= '';
+			$img_name			= '';
+			$scr			    = '';
+			$long_record_name   = '';
+			$checkbox_fild_name = '';
+			$show_pardis		= '';
+
+			//................................my query.....................
+			$myquery = "select * from `$this->source` order by `order`";
+			$r       = $this->db->prepare($myquery);
+			$r->execute();
+			$result = $r->fetchAll(PDO::FETCH_ASSOC);
+			$count_records = count($result);
+
+		  	foreach ($this->field['name'] as $i => $val) {
+			  	if ($val == 'condition') {
+			  		$condition = $this->field['value'][$i];
 			  	}
-				foreach($this->field['long_record'] as $i => $val){
-				  	if($val == 'selectbox'){
-				  		$long_record_name = $this->field['name'][$i];
-				  	}
-					if($val == 'checkbox')
-						$checkbox_fild_name = $this->field['name'][$i];
-			  	}
-			
-				foreach($this->field['option'] as $i => $val){					
-				  	if($val == 'need'){
-				  		$where[] = $this->field['name'][$i] ."= '". $this->field['value'][$i]."'";
-				  	}
-			  	}
-			    $utf        = $this->db->prepare('SET NAMES utf8');
-			    $utf->execute();
-				
-			 
-				
-				if($long_record_name !='' ){		
-					if($_GET['group'] != ''  && $_GET['group'] != 'last')	
-						$where[] = 	" `$long_record_name` = $_GET[group]";
-					if(is_array($where))
-						$where_str =  'where '. join(" and ", $where);
-					$limit      = ($_GET['group'] == ''  or $_GET['group'] == 'last') ?  'LIMIT 0 ,15' : '' ;
-			    	$myquery    = "select * from `$this->source`  $where_str order by `$this->column` $this->kind_sort $limit";
-				}else{
-					if(is_array($where))
-						$where_str =  'where '. join(" and ", $where);
-				 	$myquery    = "select * from `$this->source` ".$condition." $where_str order by `$this->column` $this->kind_sort limit 0,15 ";
+			}
+
+			foreach ($this->field['long_record'] as $i => $val) {
+				if ($val == 'selectbox') {
+					$long_record_name = $this->field['name'][$i];
 				}
-				//echo $myquery;
-				$stmt       = $this->db->prepare($myquery);
-				$stmt->bindParam(':condition',$condition, PDO::PARAM_INT );   				
-				$stmt->execute();	
-						
-				$list_empty =true;
-				$drop     = array();
-				$drop_idx     = array();
-				foreach($this->field['type'] as $i => $val){
-					switch ($val){						
-					  case('submit'):
-							break;
-					  case('reset'):
-							break;
-					  case('hyperlink'):
-							break;
-					  case('hidden'):
-							break;
-					  case('hidden_date'):
-							break;
-					  case('password'):
-							break;
-					  case('img'):					 			  
-						  	if($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick'){
-								if($this->field['upload_img'][$i]==="url"){
-									$arr_not_disable[]=$i;								
-									$arr[]       = $this->field['name'][$i];
-									$idex_arr[]  = $i;
-									$name_img =  $this->field['name'][$i];
-								}
-								$arr_not_disable[]=$i;								
-								$check_img = true;
-								$arr[]       = $this->field['name'][$i];
-								$idex_arr[]  = $i;
-								$name_img =  $this->field['name'][$i];
-								$check_show_img = true;
-							}
-						  
-							break;
-					  case('droplist1'):
-						   if($this->field['maxlen'][$i] != 'disable'){
-							  $arr_not_disable[]=$i;
-							  $drop[] = $this->field['name'][$i];
-							  $drop_idx[]  = $i;
-							}
-							break;
-					  case('droplist_parent'):
-							$droplist_parent = $i;							
-							break;
-					  case('file'):
-						   if($this->array_member[$this->field['name'][$i]] == 'img'){
-							  if($this->field['maxlen'][$i] != 'disable')
-								$arr_not_disable[]=$i;
-							  $check_show_img = true;
-							  $img_name = $this->field['name'][$i];
-							  $arr[]       = $this->field['name'][$i];
-							  $idex_arr[]  = $i;
-						  }
-						  break;
-					  default:
-						   if($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick'){	
-						   		if($this->field['maxlen'][$i] != 'disable')
-									$arr_not_disable[]=$i;								
-								$arr[]       = $this->field['name'][$i];
-								$idex_arr[]  = $i;
-							}
-							break;
-					}
+				if ($val == 'checkbox') {
+					$checkbox_fild_name = $this->field['name'][$i];
 				}
-				/*$j=1;
-				foreach($arr_not_disable as $k=>$v){
-					$where_name.=$this->field['name'][$v];
-					if($j <count($arr_not_disable))
-						$where_name.=',';
-					$j++;
-				}*/
-					
-				if($long_record_name !=  ''){				
-					
-					if($this->field['type'][$droplist_parent] == 'droplist_parent'){						
-						$show_pardis .= '<select onchange="window.location =\'?page='.$_GET['page'].'&action=pardis&group=\'+this.options[this.selectedIndex].value"><option value="last">Last Records</option>';
-						foreach($this->array_member[$long_record_name] as $i => $val){
-							
-							$show_pardis .=  '<optgroup label="'.$val['name'].'">';
-							foreach($val['sub'] as $key =>$value){				
-								if($_GET['group'] == $value['id'])
-									$show_pardis .= '<option value="'.$value['id'].'" selected="selected">'.$value['name'].'</option>';
-								else 
-									$show_pardis .= '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+			}
+
+			foreach ($this->field['option'] as $i => $val) {
+				if ($val == 'need') {
+			  		$where[] = $this->field['name'][$i] . "= '" . $this->field['value'][$i] . "'";
+			  	}
+		  	}
+
+		    $utf = $this->db->prepare('SET NAMES utf8');
+			$utf->execute();
+
+			if ($long_record_name != '') {
+				if ($_GET['group'] != '' && $_GET['group'] != 'last') {
+					$where[] = " `$long_record_name` = $_GET[group]";
+				}
+				if (is_array($where)) {
+						$where_str = 'where '. join(" and ", $where);
+				}
+				$limit   = ($_GET['group'] == ''  or $_GET['group'] == 'last') ?  'LIMIT 0 ,15' : '';
+			    $myquery = "select * from `$this->source`  $where_str order by `order` $this->kind_sort $limit";
+			} else {
+				if (is_array($where)) {
+						$where_str = 'where ' . join(" and ", $where);
+				}
+				$myquery = "select * from `$this->source` " . $condition . " $where_str order by `order` $this->kind_sort limit 0,15 ";
+			}
+
+			$stmt = $this->db->prepare($myquery);
+			$stmt->bindParam(':condition',$condition, PDO::PARAM_INT);
+			$stmt->execute();
+
+			$list_empty = true;
+			$drop       = array();
+			$drop_idx   = array();
+			foreach ($this->field['type'] as $i => $val) {
+				switch ($val) {
+					case ('submit') :
+						break;
+					case ('reset') :
+						break;
+					case ('hyperlink') :
+						break;
+					case ('hidden') :
+						break;
+					case ('hidden_date') :
+						break;
+					case ('password') :
+						break;
+					case ('img') :
+					  	if ($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick') {
+							if ($this->field['upload_img'][$i] === "url") {
+								$arr_not_disable[] = $i;
+								$arr[]       	   = $this->field['name'][$i];
+								$idex_arr[]  	   = $i;
+								$name_img 		   = $this->field['name'][$i];
 							}
-							$show_pardis .=  '</optgroup>';
+							$arr_not_disable[] = $i;
+							$check_img 		   = true;
+							$arr[]             = $this->field['name'][$i];
+							$idex_arr[]        = $i;
+							$name_img 		   = $this->field['name'][$i];
+							$check_show_img    = true;
 						}
-						$show_pardis .= '</select><br>';
-						
-					}else{						
-						$show_pardis .='<select style="margin-bottom:15px" onchange="window.location =\'?page='.$_GET['page'].'&action=pardis&group=\'+  this.options[this.selectedIndex].value">
-										<option value="last">Last Records</option>';
-						foreach($this->array_member[$long_record_name] as $key => $value){
-							
-							if($_GET['group'] == $key)
-								$show_pardis .='<option selected="selected" value="'.$key.'">'.$value.'</option>';
-							else
-								$show_pardis .='<option value="'.$key.'">'.$value.'</option>';							
+						break;
+					case ('droplist1') :
+						if ($this->field['maxlen'][$i] != 'disable') {
+							  $arr_not_disable[] = $i;
+							  $drop[] 		     = $this->field['name'][$i];
+							  $drop_idx[]        = $i;
 						}
-						$show_pardis .= '</select>';
+						break;
+					case ('droplist_parent') :
+						$droplist_parent = $i;
+						break;
+					case ('file') :
+						if ($this->array_member[$this->field['name'][$i]] == 'img') {
+							if ($this->field['maxlen'][$i] != 'disable') {
+								$arr_not_disable[] = $i;
+							}
+							$check_show_img = true;
+							$img_name 	    = $this->field['name'][$i];
+							$arr[]          = $this->field['name'][$i];
+							$idex_arr[]     = $i;
+						}
+						break;
+					default :
+						if ($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick') {
+							if ($this->field['maxlen'][$i] != 'disable') {
+								$arr_not_disable[] = $i;
+							}
+							$arr[]      = $this->field['name'][$i];
+							$idex_arr[] = $i;
+						}
+						break;
+				}
+			}
+
+			if ($long_record_name != '') {
+				if ($this->field['type'][$droplist_parent] == 'droplist_parent') {
+					$show_pardis .= '<select onchange="window.location =\'?page=' . $_GET['page'] .
+									'&action=pardis&group=\'+this.options[this.selectedIndex].value"><option value="last">Last Records</option>';
+					foreach ($this->array_member[$long_record_name] as $i => $val) {
+						$show_pardis .= '<optgroup label="' . $val['name'] . '">';
+						foreach ($val['sub'] as $key => $value) {
+							if ($_GET['group'] == $value['id']) {
+								$show_pardis .= '<option value="' . $value['id'] . '" selected="selected">' . $value['name'] . '</option>';
+							} else {
+								$show_pardis .= '<option value="' . $value['id'] . '">' . $value['name'] . '</option>';
+							}
+						}
+						$show_pardis .= '</optgroup>';
 					}
-				}			
-				$show_pardis .= '<div class="tab-content default-tab" id="tab1">									
-									<div class="notification information png_bg">
-										<a href="#" class="close"><img src="images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
-										<div>Here you can see the last record, you can delete, edit records have.</div>
-									</div>	
-									<div id="overflow" style="display:none"><div id="loading" align="center" ><img src="images/loading-icon.gif"/></div>
-								</div><div  class="clearfix"></div>';		
-									  
-				$show_pardis .= '<table><thead><tr><th><input class="check-all" type="checkbox"/></th>';										
-				
-				foreach($idex_arr as $i=>$t){
-					if($check_show_img == true && $name_img === $arr[$i]){
-						$show_pardis .= '<th>Display Image</th>';
-						$check_show_img = false;
-						$img_idx = $i;
-						$check_img = true;
-					}else
-					  	$show_pardis .= '<th>'.$this->field['label'][$t].'</th>';					  
+					$show_pardis .= '</select><br />';
+				} else {
+					$show_pardis .= '<select style="margin-bottom:15px" onchange="window.location =\'?page=' . $_GET['page'] .
+									'&action=pardis&group=\'+  this.options[this.selectedIndex].value">' .
+									'<option value="last">Last Records</option>';
+					foreach ($this->array_member[$long_record_name] as $key => $value) {
+						if ($_GET['group'] == $key) {
+							$show_pardis .= '<option selected="selected" value="' . $key . '">' . $value . '</option>';
+						} else {
+							$show_pardis .= '<option value="' . $key . '">' . $value . '</option>';
+						}
+					}
+					$show_pardis .= '</select>';
 				}
-				foreach($drop_idx as $i=>$t){
-					$show_pardis .= '<th>'.$this->field['label'][$t].'</th>';  
+			}
+
+			$show_pardis .= '<div class="tab-content default-tab" id="tab1">' .
+							'<div class="notification information png_bg">' .
+							'<a href="#" class="close"><img src="images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>' .
+							'<div>Here you can see the last record, you can delete, edit records have.</div>' .
+							'</div>' .
+							'<div id="overflow" style="display:none"><div id="loading" align="center" ><img src="images/loading-icon.gif"/></div>' .
+							'</div><div class="clearfix"></div>';
+
+			$show_pardis .= '<table><thead><tr class="ui-sortable"><th></th><th><input class="check-all" type="checkbox" /></th>';
+
+			foreach ($idex_arr as $i => $t) {
+				if ($check_show_img == true && $name_img === $arr[$i]) {
+					$show_pardis    .= '<th>Display Image</th>';
+					$check_show_img  = false;
+					$img_idx 	     = $i;
+					$check_img       = true;
+				} else {
+				  	$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
 				}
-				
-				$show_pardis .= '<th>tools</th></tr></thead><tbody>';
-				
-				while($re = $stmt->fetch(PDO::FETCH_ASSOC)){
-					//$count_records=count($re);
-					$list_empty        = false;
-					$show_pardis    .= '<tr><td><input type="checkbox" checkbox-id="'.$re['id'].'" /></td>';						
-					foreach($arr as $i =>$v){
-						 foreach($re as $ii => $value){	
-						 					 
-							if($v === $ii){
-								if($check_img == true && $i == $img_idx &&$value!=''){
-									//$show_pardis .= '<td align="center"><img name="kk" src="../'.$value.'" width="30px" height="30px"/></td>';
-									$show_pardis .= '<td ><img name="kk" src="' . img::check_img('../'.$value,100,100,'../resize/').'" width="100px" height="100px"/></td>';
-								}else{
-									if (strlen($value) >100)
-										$show_pardis .= '<td >'. substr(strip_tags($value),0,100).'...'.'</td>';
-									else 
-										$show_pardis .= '<td>'.$value.'</td>';
-										
+			}
+			foreach ($drop_idx as $i => $t) {
+				$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
+			}
+
+			$show_pardis .= '<th>tools</th></tr></thead><tbody class="sortable">';
+
+			while ($re = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				$list_empty   = false;
+				$show_pardis .= '<tr>';
+				$show_pardis .= '<input type="hidden" name="order" value="' . $re['order'] . '" />';
+				$show_pardis .= '<td><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>';
+				$show_pardis .= '<td><input type="checkbox" checkbox-id="' . $re['id'] . '" /></td>';
+				foreach ($arr as $i => $v) {
+					foreach ($re as $ii => $value) {
+						if ($v === $ii) {
+							if ($check_img == true && $i == $img_idx && $value != '') {
+								$show_pardis .= '<td><img name="kk" src="' . img::check_img('../' . $value, 100, 100, '../resize/') .
+												'" width="100px" height="100px"/></td>';
+							} else {
+								if (strlen($value) > 100) {
+									$show_pardis .= '<td>' . substr(strip_tags($value), 0, 100) . '...' . '</td>';
+								} else {
+									$show_pardis .= '<td>' . $value . '</td>';
 								}
 							}
-						 }
+						}
 					}
-					
-					foreach($drop as $i =>$v){
-							foreach($re as $ii => $value){
-								if($v === $ii){ 
-									foreach($this->array_member[$ii] as $iii => $valu)
-								    	if($iii == $value){
-											if (strlen($valu) >100)
-												$value = substr(strip_tags($valu),0,100).'...';
-											$show_pardis .= '<td>'.$valu.'</td>';
-										}									
-								}
-							}
-					}
-					$show_pardis .= '<td>';												  
-					$show_pardis .= '<a page="'.$_GET['page'].'" row-id="'.$re['id'].'" name="delete" href="?page='.$_GET['page'].
-							'&id='.$re['id'].'&action=show_delete" title="Delete">
-							 <img src="images/icons/cross.png" alt="Delete" />
-							 </a>							  
-							 <a name="update" href="?page='.$_GET['page'].'&id='.$re['id'].'&action=show_update" title="Edit Meta">
-							 	<img src="images/icons/hammer_screwdriver.png" alt="Edit" />
-							 </a>';
-					$show_pardis .= '</td>';
-					$show_pardis .=	'</tr>';
 				}
 
-				if($list_empty   == true)
-					$this->error .= 'Sorry, no records to display.';			
-				
-				if($checkbox_fild_name !=  ''){
-					$checkbox_key = array_search($checkbox_fild_name, $this->field['name']);
-					foreach($this->array_member[$checkbox_fild_name] as $key => $value){
-						$show_pardis .= '<a page="'.$_GET['page'].'" key="'.$checkbox_key.'" value="'.$key.'" class="checkbox button ui-corner-all-state-default" href="#"><span>'.$value.'</span> list selectet items </a>';
-					} 	 
-				}
-	
-				$show_pardis  .= '</tbody>
-									  <tfoot>
-										<tr>
-											<td colspan="7">
-												<div class="bulk-actions align-left">
-													<select name="dropdown">
-														<option value="option1">Please select an option</option>
-														<option value="delete">Delete</option>
-													</select>
-													<a href="#" class="button">Do</a>
-												</div>';			
-				if($count_records !=''){			 
-					if($count_records > 15){
-						$j=1;	
-						$i=1;															
-						$show_pardis  .='<div class="pagination">
-													<a title="First Page"  href="#">« first</a>
-													<a title="Previous Page" href="#">« pre</a>';	
-						while($i <=$count_records){
-							if ($j==1)
-								$show_pardis  .='<a class="number current" href="#">'.$j.'</a>';
-							else
-								$show_pardis  .='<a class="number" href="#">'.$j.'</a>';
-							$i=$i+15;
-							$j++;
-						}			
-						
-						$show_pardis  .='<a title="Next Page" href="#">next »</a>
-									  <a title="Last Page" href="#">last »</a>
-									</div> <!-- End .pagination -->';
+				foreach ($drop as $i => $v) {
+					foreach ($re as $ii => $value) {
+						if ($v === $ii) {
+							foreach($this->array_member[$ii] as $iii => $valu) {
+							    	if ($iii == $value) {
+										if (strlen($valu) > 100) {
+											$value = substr(strip_tags($valu), 0, 100) . '...';
+										}
+										$show_pardis .= '<td>' . $valu . '</td>';
+									}
+							}
+						}
 					}
-				}			
-					
-				$show_pardis  .='<div class="clear"></div>
-									</td></tr>
-								</tfoot></table>';				
-				
-				$show_pardis .= '</div>'; 
-				return $show_pardis;		
+				}
+
+				$show_pardis .= '<td>';
+				$show_pardis .= '<a page="' . $_GET['page'] . '" row-id="' . $re['id'] . '" name="delete" href="?page=' . $_GET['page'] .
+								'&id=' . $re['id'] . '&action=show_delete" title="Delete">' .
+						 	    '<img src="images/icons/cross.png" alt="Delete" />' .
+						 		'</a>' .
+						 		'<a name="update" href="?page=' . $_GET['page'] . '&id=' . $re['id'] . '&action=show_update" title="Edit Meta">' .
+						 		'<img src="images/icons/hammer_screwdriver.png" alt="Edit" />' .
+						 		'</a>';
+				$show_pardis .= '</td>';
+				$show_pardis .=	'</tr>';
 			}
-			//................................................................................................			  
-			function show_update($id){
+
+			if ($list_empty == true) {
+				$this->error .= 'Sorry, no records to display.';
+			}
+
+			if ($checkbox_fild_name != '') {
+				$checkbox_key = array_search($checkbox_fild_name, $this->field['name']);
+				foreach ($this->array_member[$checkbox_fild_name] as $key => $value) {
+					$show_pardis .= '<a page="' . $_GET['page'] . '" key="' . $checkbox_key . '" value="' . $key .
+								    '" class="checkbox button ui-corner-all-state-default" href="#"><span>' . $value . '</span> list selectet items </a>';
+				}
+			}
+
+			$show_pardis .= '</tbody>' .
+							'<tfoot>' .
+							'<tr>' .
+							'<td colspan="7">' .
+							'<div class="bulk-actions align-left">' .
+							'<select name="dropdown">' .
+							'<option value="option1">Please select an option</option>' .
+							'<option value="delete">Delete</option>' .
+							'</select>' .
+							'<a href="#" class="button">Do</a>' .
+							'</div>';
+
+			if ($count_records != '') {
+				if ($count_records > 15) {
+					$j = 1;
+					$i = 1;
+					$show_pardis .= '<div class="pagination">' .
+									'<a title="First Page"  href="#">« first</a>' .
+									'<a title="Previous Page" href="#">« pre</a>';
+					while ($i <= $count_records) {
+						if ($j==1) {
+							$show_pardis .= '<a class="number current" href="#">' . $j . '</a>';
+						} else {
+							$show_pardis .='<a class="number" href="#">' . $j . '</a>';
+						}
+						$i = $i + 15;
+						$j++;
+					}
+					$show_pardis .= '<a title="Next Page" href="#">next »</a>' .
+								    '<a title="Last Page" href="#">last »</a>' .
+									'</div> <!-- End .pagination -->';
+				}
+			}
+
+			$show_pardis .= '<div class="clear"></div>' .
+							'</td></tr>' .
+							'</tfoot></table>';
+			$show_pardis .= '</div>';
+
+			return $show_pardis;
+		}
+		// }}}
+		// {{{ show_update
+		function show_update($id){
 				
 				$utf       = $this->db->prepare('SET NAMES utf8');
 			    $utf->execute();
@@ -1344,30 +1385,6 @@ class field {
 						 	  }
 						  } 
 						  
-							/*if($this->field['type'][$n] == 'tag'){
-								$where_tag='';
-								if($row[$i] !='') {
-							 		$tag_id=explode(',',$row[$i]);							
-									foreach($tag_id as $key=>$value){							 
-										$where_tag .='`id`='.$value;
-										if($value !=end($tag_id))
-											$where_tag.=' or ';
-									}							
-									$q	   = "select * from `tag` where $where_tag";	
-									$s	   = $this->db->prepare($q);
-									$s	   ->execute();				
-									$re_tag  = $s->fetchAll(PDO::FETCH_ASSOC);														
-									$tag_show_updat='<ul id="all_tags" style="margin-bottom: 23px;">'; 							  
-							  		foreach($re_tag as $key_tag=>$value_tag){								 		
-								 		$tag_show_updat.='<li class="ui-state-default ui-corner-all">'.$value_tag['name'].'<span class="ui-icon ui-icon-close" style="cursor: pointer;"></span><li>';
-							  		}
-							  		$tag_show_updat.='</ul>';
-								//echo $tag_show_updat;
-								}
-								
-						 	}		*/			  
-						 
-						  
 						  if($this->field['type'][$n] == 'password')
 						  	$this->field['value'][$n] = '';
 						  else						    
@@ -1382,7 +1399,8 @@ class field {
 											<div class="clear"></div>';
 			
 			}
-			//.................................................................................................
+			// }}}
+			// {{{ func_update
 			function func_update($id){
 				
 				$this->fixSlashes();
@@ -1567,19 +1585,6 @@ class field {
 						
 												
 							
-							/*if($count <$count_type){ 																
-								$strselet .='`'.$this->field['name'][$i].'`,';									
-								$strselect_where.='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'and';
-								$strupdate.='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\',';
-								
-							}else{								
-								$strselet .='`'.$this->field['name'][$i].'`';													
-								$strselect_where.='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-								$strupdate.='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-							}			
-						
-						*/
-						//$value= $this->field['value'][$i];	
 						$temp = $this->field['name'][$i];						
 						if ($_POST[$temp]!=''){						
 							$tags='';		
@@ -1606,8 +1611,6 @@ class field {
 							if($count < $count_type){ 												   
 								$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
 									     ' `'.$this->field['name'][$i].'` ';
-							   // $strselect_where.= '\''.$this->field['name'][$i].'\', ';
-							  //  $strupdate         .=' `'.$temp .'`=\''.$tags.'\'and ';
 
 								$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$tags.'\' ' :
 										    ' `'.$this->field['name'][$i] .'`=\''.$tags.'\' ';
@@ -1637,8 +1640,6 @@ class field {
 										    ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
 								$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
 									      ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-							   //$strupdate         .='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-							   //$strselect_where.= '\''.$this->field['name'][$i].'\'';
 							}
 						}
 						break;		
@@ -1796,9 +1797,10 @@ class field {
 				}
 
 				}
-		        }
-			//.................................................................................................			 
-			function show_delete($id){
+	        }
+			// }}}
+			// {{{ show_delete
+			function show_delete($id) {
 				$this->resualt.='<div class="content-box column-right">
 										<div class="content-box-header">				
 										 <h3>remove a item</h3>					
@@ -1818,7 +1820,8 @@ class field {
 										<div class="clear"></div>'; 
 			
 			}
-			//.................................................................................................			  
+			// }}}
+			// {{{ func_delete
 			function func_delete($id){
 				 if($_GET['method'] == 'ajax-checkbox'){
 				 	$array = split(',',$id);
@@ -1832,8 +1835,6 @@ class field {
 
 				 $myquery = "delete from `$this->source` where ".$where;
 				 $stmt    = $this->db->prepare($myquery);
-				// $stmt->bindParam(':id',$id, PDO::PARAM_INT );
-				//echo $myquery;
    				 $bool = $stmt->execute();
 				 if($bool == 1){
 				 	if($_GET['method']=='ajax'){
@@ -1855,42 +1856,17 @@ class field {
 						$this->error .= 'Unfortunately it is not possible to delete the record';
 				 }
 			  }
-			//.................................................................................................
-			   /*function debubg_form()
-				 {
-			 $c=0;
-			 $count = count($this->field['type']);
-			 foreach($this->field['name'] as $i => $val)
-			       {
-				   switch($this->field['type'][$i])
-			 {
-			    case('submit'):
-				     $count--;
-					 break;
-				case('reset'):
-				     $count--;
-					 break;
-			}
-				     $str = "select * from $this->source";
-					 $re  = mysql_query($str) or die ('select is failed');
-					 $row = mysql_fetch_array($re);
-					 foreach($row as $j=>$v)
-					    if(gettype($j) === 'string')
-					       if($val == $j)
-						   $c++;
-				   }
-				   if($c != $count )
-				      $this->resualt .= 'plz be carefull about name of fields,names must be equal with column name';
-			 }*/
-			//.................................................................................................			 
+			  // }}}
+			// {{{ option
 			function option($value,$i){				
 				 $type = gettype($value);
 				 $this->field['option'][$i];
 				 if($this->field['option'][$i] == $type)
 					return true;
 				 else  return false;
-			 }	
-			//.................................................................................................
+			}
+			// }}}
+			// {{{ selet_items
 			function selet_items($table,$column,$field){				
 				 $utf     = $this->db->prepare('SET NAMES utf8');
 				 $utf->execute();
@@ -1907,9 +1883,10 @@ class field {
 				 if(is_null($t))
 					return;
 				 return $arr[$field];	 
-			 }
-			//.................................................................................................
-			function selet_items2($table,$column1,$column2,$field){				
+			}
+			// }}}
+			// {{{ selet_items2
+			function selet_items2($table,$column1,$column2,$field) {
 				 $utf     = $this->db->prepare('SET NAMES utf8');
 				 $utf->execute();
 				 $myquery = "select distinct `$column1`,`$column2` from `$table`";
@@ -1924,7 +1901,9 @@ class field {
 				 if(is_null($t))
 					return;
 				 return $arr[$field];	 
-			 }
+			}
+			// }}}
+			// {{{ selet_items_parent
 			function selet_items_parent($table,$id,$parent){
 				 $utf     = $this->db->prepare('SET NAMES utf8');
 				 $utf->execute();
@@ -1937,16 +1916,18 @@ class field {
 					$category[$key]['sub'] =  $sth->fetchAll();
   				 }				 
 				 return $category;	 
-			 }
-			//.................................................................................................
-			function  checkEmail($email22){				
+			}
+			// }}}
+			// {{{ checkEmail
+			function checkEmail($email22) {
 				if (!preg_match("/^[a-z0-9]+([_\\.-][a-z0-9]+)*@([a-z0-9]+([\.-][a-z0-9]+)*)+\\.[a-z]{2,}$/i", $email22)){
 				   return false;
 				}else
 				   return true;				
 			}
-			//.................................................................................................
-			function return_editor(){				
+			// }}}
+			// {{{ return_editor
+			function return_editor() {
 			 return 'tinyMCE.init({
 					// General options
 					
@@ -1969,7 +1950,7 @@ class field {
 					theme_advanced_resizing : true,
 				
 					// Example content CSS (should be your site CSS)
-					content_css : "css/example.css",
+					//content_css : "css/example.css",
 				
 					// Drop lists for link/image/media/template dialogs
 					template_external_list_url : "js/template_list.js",
@@ -1984,7 +1965,8 @@ class field {
 					}
 				})';
             }
-			//.................................................................................................
+			// }}}
+			// {{{ selet_items3
 			function selet_items3($table,$column1,$column2,$field,$condition){
 				 $utf     = $this->db->prepare('SET NAMES utf8');
 				 $utf->execute();
@@ -2000,12 +1982,13 @@ class field {
 				 if(is_null($t))
 					return;
 				 return $arr[$field];	 
-			 }
-			//.................................................................................................
-			function upload_img($t,$val){				
-				//secho $t.'<br>'.$val.'ll';		
 			}
-			//.................................................................................................
+			// }}}
+			// {{{ upload_img
+			function upload_img($t,$val) {
+			}
+			// }}}
+			// {{{ join_tables
 		 	function join_tables($tables,$fields,$add_con = '',$show_clmn = '*'){ 
 		  		$str_tables = '';
 				$str_con = '';
@@ -2060,9 +2043,9 @@ class field {
 		   $stmt->execute();
 		   return $stmt->fetchAll();
 		   	}
+			// }}}
 
-			//.................................................................................................
-
+		// {{{ buildGoogleDriveService
 		// Google Drive functions
 		/**
 		 * Google Drive Build Service
@@ -2081,7 +2064,9 @@ class field {
 
 			return new Google_DriveService($client);
 		}
+		// }}}
 
+		// {{{ insertGoogleDriveFile
 		/**
 		 * Insert new file.
 		 *
@@ -2122,7 +2107,9 @@ class field {
 				print "An error occurred: " . $e->getMessage();
 			}
 		}
+		// }}}
 
+		// {{{ downloadGoogleDriveFile
 		/**
 		 * Google Drive Download File
 		 */
@@ -2142,5 +2129,20 @@ class field {
 				return null;
 			}
 		}
+		// }}}
+
+		// {{{ updateRowOrder
+		function updateRowOrder() {
+
+			$orders = (!empty($_POST['orders'])) ? $_POST['orders'] : null;
+			if ($orders) {
+				foreach ($orders as $key => $order) {
+					$query = "update `" . $this->source . "` set `order` = " . $order["order"] . " where `id` = " . $order["id"];
+					$stmt  = $this->db->prepare($query);
+					$stmt->execute();
+				}
+			}
+		}
+		// }}}
 };
 ?>
