@@ -5,19 +5,19 @@ This version is for LG project only base on 0.3.0.2
 
 class field {
 
-	var $action        = '';
-	var $method        = 'post';
-	var $source        = '';    //to keep name of table
-	var $kind_sort     = 'ASC';
-	var $column        = 'id';
-	var $resualt       = '';
-	var $field         = array();//to keep element of fields
-	var $array_member  = array();
-	var $being_empty   = array(); //to identify field can be empty or not
-	var $db            = '';
-	var $error         = '';
-	var $successfull   = '';
-	var $help          = array();
+	var $action       = '';
+	var $method       = 'post';
+	var $source       = ''; // to keep name of table
+	var $kind_sort    = 'ASC';
+	var $column       = 'id';
+	var $resualt      = '';
+	var $field        = array(); // to keep element of fields
+	var $array_member = array();
+	var $being_empty  = array(); // to identify field can be empty or not
+	var $db           = '';
+	var $error        = '';
+	var $successfull  = '';
+	var $help         = array();
 
 	// {{{ __construct
     function __construct($method, $action, $source, $columns, $k_sort) {
@@ -41,6 +41,7 @@ class field {
 	// }}}
 	// {{{ check_table
 	function check_table() {
+
 		$table_name = $this->source;
 		$value	    = $this->field;
 		$index	    = 0;
@@ -48,6 +49,7 @@ class field {
 		$m_query  = "CREATE TABLE IF NOT EXISTS `$table_name`(`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY";
 		$m_query .= ", `order` INT NOT NULL";
 		while ($index < count($this->field['name'])) {
+
 			if (($value['type'][$index] == 'text' and ($value['maxlen'][$index] == 'disable' or $value['maxlen'][$index] == '')) or
 			    ($value['type'][$index] == 'img') or ($value['type'][$index] == 'droplist1') or ($value['type'][$index] == 'tag')) {
 					$field_type = 'varchar';
@@ -69,8 +71,8 @@ class field {
 				if ($index < count($this->field['name'])) {
 					$m_query .= ',';
 				}
-				$fieldType = ($field_type == 'longtext') ? $field_type : $field_type . '(' . $length . ')';
-				$m_query .= "`" . $value['name'][$index] . "`" . ' ' . $fieldType . ' CHARACTER SET utf8';
+				$fieldType  = ($field_type == 'longtext') ? $field_type : $field_type . '(' . $length . ')';
+				$m_query   .= "`" . $value['name'][$index] . "`" . ' ' . $fieldType . ' CHARACTER SET utf8';
 			}
 			$index++;
 		}
@@ -85,41 +87,41 @@ class field {
 		$this->check_table();
 
 		switch ($this->action) {
-			case('insert_items') :
+			case ('insert_items') :
 				$this->resualt .= '<a href="?page='.$_GET['page'].'&action=insert">insert group</a><br />';
 				$this->resualt .= '<a href="?page='.$_GET['page'].'&action=show">list of groups</a>';
 				break;
-			case('insert') :
+			case ('insert') :
 				$this->showform();
 				break;
-			case('insert_new') :
+			case ('insert_new') :
 				$this->func_insert();
 				break;
-			case('show_update') :
+			case ('show_update') :
 				$this->show_update($_GET['id']);
 				break;
-			case('update') :
+			case ('update') :
 				$this->func_update($_GET['id']);
 				break;
-			case('delete') :
+			case ('delete') :
 				$this->func_delete($_GET['id']);
 				break;
-			case('show') :
+			case ('show') :
 				$this->show_list();
 				break;
-			case('show_delete') :
+			case ('show_delete') :
 				$this->show_delete($_GET['id']);
 				break;
-			case('pardis') :
+			case ('pardis') :
 				$this->show_insert();
 				break;
-			case('pagging') :
+			case ('pagging') :
 				$this->pagging();
 				break;
-			case('autocomplete') :
+			case ('autocomplete') :
 				$this->autocomplete();
 				break;
-			case('updateRowOrder') :
+			case ('updateRowOrder') :
 				$this->updateRowOrder();
 				break;
 		}
@@ -199,17 +201,17 @@ class field {
 
 		foreach ($this->field['type'] as $i => $val) {
 			switch ($val) {
-				case('submit') :
+				case ('submit') :
 					break;
-				case('reset') :
+				case ('reset') :
 					break;
-			    case('hyperlink') :
+			    case ('hyperlink') :
 					break;
-			    case('hidden') :
+			    case ('hidden') :
 					break;
-			    case('password') :
+			    case ('password') :
 					break;
-			    case('img') :
+			    case ('img') :
 
 					if ($this->field['maxlen'][$i] != 'disable') {
 						if ($this->field['upload_img'][$i] === "url") {
@@ -228,17 +230,17 @@ class field {
 					$check_show_img    = true;
 
 					break;
-				case('droplist1') :
+				case ('droplist1') :
 					if ($this->field['maxlen'][$i] != 'disable') {
 						$arr_not_disable[] = $i;
 						$drop[]			   = $this->field['name'][$i];
 						$drop_idx[]        = $i;
 					}
 					break;
-			    case('droplist_parent') :
+			    case ('droplist_parent') :
 					$droplist_parent = $i;
 					break;
-			    case('file') :
+			    case ('file') :
 					if ($this->array_member[$this->field['name'][$i]] == 'img') {
 						if ($this->field['maxlen'][$i] != 'disable') {
 							$arr_not_disable[] = $i;
@@ -365,7 +367,7 @@ class field {
 
 		$this->resualt .= '</div> <!-- End .content-box-content -->' .
 						  '</div> <!-- End .content-box -->' .
-						  '<div class="clear"></div>';							
+						  '<div class="clear"></div>';
 	}
 	// }}}
     // {{{ addfield
@@ -399,15 +401,15 @@ class field {
     function showform() {
 
 	    switch ($this->action) {
-			case('pardis') :
+			case ('pardis') :
 				$form_pardis .= '<div class="tab-content" id="tab2"><form enctype="multipart/form-data" method="' . $this->method .
 								'" action="?page=' . $_GET['page'] . '&action=insert_new">';
 				break;
-			case('insert') :
+			case ('insert') :
 				$form_pardis .= '<div class="tab-content" id="tab2"><form enctype="multipart/form-data" method="' . $this->method .
 							    '" action="?page=' . $_GET['page'] . '&action=insert_new">';
 				break;
-			case('show_update') :
+			case ('show_update') :
 				$form_pardis .= '<div class="content-box column-right">' .
 								'<div class="content-box-header">' .
 								'<h3>Edit</h3>' .
@@ -415,9 +417,9 @@ class field {
 								'<div class="content-box-content">' .
 								'<div class="tab-content default-tab"><p>';
 				$form_pardis .= '<form enctype="multipart/form-data" method="' . $this->method . '" action="?page=' .
-							    $_GET['page'].'&action=update&id='.$_GET['id'].'">';
+							    $_GET['page'] . '&action=update&id=' . $_GET['id'] . '">';
 				break;
-			case('show_delete') :
+			case ('show_delete') :
 				$form_pardis .= '<form method="' . $this->method . '" action="?page=' . $_GET['page'] . '&action=delete&id=' . $_GET['id'] . '">';
 				break;
 		}
@@ -427,7 +429,7 @@ class field {
 			$name  = $this->field['name'][$t];
 			$value = $this->field['value'][$t];
 			switch ($type) {
-				case('radio') :
+				case ('radio') :
 					if ($this->array_member[$name] == '') {
 						$this->error .= '  '.$this->field['label'][$t].' Is not defined ';
 						break;
@@ -437,10 +439,10 @@ class field {
 						foreach ($this->array_member[$name] as $i => $val) {
 								if ($i === 'checked') {
 									$form_pardis .= $this->field['field'][$name][] = '<p>' . $val . '<input type="' . $type .
-												    '" name="'.$name.'" value="'.$val.'" checked="checked"/></p>';
+												    '" name="' . $name . '" value="' . $val . '" checked="checked"/></p>';
 								} else {
 									$form_pardis .= $this->field['field'][$name][] = '<p>' . $val . '<input type="' . $type .
-												    '" name="'.$name.'" value="'.$val.'"/> </p>';
+												    '" name="' . $name . '" value="' . $val . '"/> </p>';
 								}
 						}
 					} else {
@@ -456,9 +458,9 @@ class field {
 					}
 					$form_pardis .= '' . $this->field['label'][$t] . '</p>';
 					break;
-				case('checkbox') :
+				case ('checkbox') :
 					if ($this->array_member[$name] == '') {
-						$this->error .= '  '. $this->field['label'][$t] . ' Is not defined ';
+						$this->error .= '  ' . $this->field['label'][$t] . ' Is not defined ';
 						break;
 					}
 					$form_pardis .= '<p>';
@@ -472,7 +474,7 @@ class field {
 					}
 					$form_pardis .= '</p>';
 					break;
-				case('droplist') :
+				case ('droplist') :
 					if ($this->field['value'][$t] != NULL) {
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] . '</label><select name="' .
 									    $name . '" class="small-input">';
@@ -502,7 +504,7 @@ class field {
 						$form_pardis .= $this->field['field'][$name][] = '</select></p>';
 					}
 					break;
-				case('droplist1') :
+				case ('droplist1') :
 					if ($this->field['value'][$t] != NULL) {
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
 									    '</label><select name="' . $name . '" class="small-input">';
@@ -516,11 +518,11 @@ class field {
 						$form_pardis .= $this->field['field'][$name][] = '</select></p>';
 					} else {
 						if ($this->array_member[$name] == '') {
-							$this->error .= '  '.$this->field['label'][$t].' Is not defined ';
+							$this->error .= '  ' . $this->field['label'][$t] . ' Is not defined ';
 							break;
 						}
 						$form_pardis .= '<p>';
-						$form_pardis .= $this->field['field'][$name][]='<label>' . $this->field['label'][$t] . '</label><select name="' .
+						$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] . '</label><select name="' .
 								        $name . '" class="small-input">';
 						foreach ($this->array_member[$name] as $i => $val) {
 							if ($i === 'selected') {
@@ -533,7 +535,7 @@ class field {
 					}
 					break;
 
-					case('tag') :
+					case ('tag') :
 						$form_pardis .= '<p>';
 						if ($this->field['value'][$t] != NULL) {
 							$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
@@ -555,7 +557,7 @@ class field {
 							foreach ($re_tag as $key_tag => $value_tag) {
 								$form_pardis .= '<li class="ui-state-default ui-corner-all">' . $value_tag['name'] .
 											    '<span class="ui-icon ui-icon-close" style="cursor: pointer;"></span>' .
-											    '<input type="hidden" name="tag[]" value="'.$value_tag['name'].'"></li>';
+											    '<input type="hidden" name="tag[]" value="' . $value_tag['name'] . '"></li>';
 							}
 							$form_pardis .= '</ul>';
 							$form_pardis .= $this->field['field'][$name][] = '</p>';
@@ -569,10 +571,10 @@ class field {
 						}
 						break;
 
-					case('droplist_parent') :
+					case ('droplist_parent') :
 						if ($this->field['value'][$t] != NULL) {
 							$form_pardis .= '<p>' . $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
-										    '</label><select name="' . $name . '" class="small-input">';							
+										    '</label><select name="' . $name . '" class="small-input">';
 							foreach ($this->array_member[$name] as $i => $val) {
 								$form_pardis .= $this->field['field'][$name][] = '<optgroup label="' . $val['name'] . '">';
 								foreach ($val['sub'] as $key => $value) {
@@ -609,7 +611,7 @@ class field {
 							$form_pardis .= $this->field['field'][$name][] = '</select></p>';
 						}
 						break;
-					case('combobox') :
+					case ('combobox') :
 						$form_pardis .= '<p>';
 						$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] . '</label><select name="' .
 									    $name . '" multiple="multiple" >';
@@ -626,13 +628,13 @@ class field {
 								if ($a === 'selected') {
 									$form_pardis .= $this->field['field'][$name][] = '<option value="' . $aa . '" selected="selected">' . $aa . '</option>';
 								} else {
-								  $form_pardis .= $this->field['field'][$name][] = '<option value="' . $aa . '">' . $aa . '</option>';
+									$form_pardis .= $this->field['field'][$name][] = '<option value="' . $aa . '">' . $aa . '</option>';
 								}
 							}
 						}
 						$form_pardis .= $this->field['field'][$name][] = '</select></p>';
 						break;
-					case('textarea') :
+					case ('textarea') :
 						if ($j == 8) {
 							$form_pardis .= '</fieldset><fieldset ><p>';
 						} else {
@@ -646,16 +648,16 @@ class field {
 											$name . '" rows="5" class="text-input textarea wysiwyg"/>' . $value . '</textarea></p>';
 						}
 						break;
-					case('password') :
+					case ('password') :
 						if ($j == 7) {
 							$form_pardis .= '</fieldset><fieldset ><p>';
 						} else {
 							$form_pardis .= '<p>';
 						}
-						$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] . '</label><input class="text-input small-input" type="'.
+						$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] . '</label><input class="text-input small-input" type="' .
 									    $type . '" name="' . $name . '" value="' . $value . '" /></p>';
 					    break;
-					case('text') :
+					case ('text') :
 						$form_pardis .= '<p>';
 						if ($this->array_member[$name] == 'disabled') {
 							$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
@@ -663,33 +665,33 @@ class field {
 											'" disabled="disabled" /><span></span></p>';
 						} else {
 							$form_pardis .= $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
-											'</label><input class="text-input small-input" type="' . $type . '" name="' . $name . '" value="' .$value .
+											'</label><input class="text-input small-input" type="' . $type . '" name="' . $name . '" value="' . $value .
 										    '" /><span></span></p>';
 						}
 						break;
-					case('hidden') :
+					case ('hidden') :
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<input type="' . $type . '" name="' . $name . '" value="' . $value . '" /></p>';
 						break;
-					case('submit') :
+					case ('submit') :
 						$form_pardis .= $this->field['field'][$name][] = '<br />' . '<input id="insert-submit" class="button" type="' . $type .
 										'" name="' . $name . '" value="' . $value . '" />';
 						break;
-					case('reset') :
+					case ('reset') :
 						$form_pardis .= $this->field['field'][$name][] = '' . '<input id="insert-submit" class="button" type="' . $type .
 									    '" name="' . $name . '" value="' . $value . '" /></p>';
 						break;
-					case('hyperlink') :
+					case ('hyperlink') :
 						$form_pardis .= $this->field['field'][$name][] = '<p>' . '<a href="' . $value . '" name="' . $name . '">' . $Label . '</a></p>';
 						break;
-					case('file') :
+					case ('file') :
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
 									    '</label><input type="file" name="' . $name . '" value="' . $value . '" /></p>';
 						break;
-					case('img') :
+					case ('img') :
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<label>' . $this->field['label'][$t] .
 										'</label><input type="file" name="' . $name . '" value="' . $value . '"/></p>';
 						break;
-					case('hidden_date') :
+					case ('hidden_date') :
 						$form_pardis .= '<p>' . $this->field['field'][$name][] = '<input type="hidden" name="' . $name . '" value="' . time() . '" /></p>';
 			}
 			$j++;
@@ -732,251 +734,242 @@ class field {
 
 			foreach ($this->field['maxlen'] as $i => $v) {
 				if ($stick_b != '' &&  $this->field['option'][$i] != $stick_b && $stick_after == false) {
-				   if($this->field['type'][$i] == 'submit')
+					if ($this->field['type'][$i] == 'submit') {
 					   $check_submit = true;
-					$stick_value[] = $stick_value_temp;
+					}
+					$stick_value[]    = $stick_value_temp;
 					$stick_value_temp = '';
-					$stick_after = true;			
-				}if($v == 'stick' && $this->field['name'][$i] != $stick_b && $this->field['name'][$i] == $this->field['option'][$i]){
-					$stick[] = $this->field['name'][$i];
-					$stick_b = $this->field['name'][$i];
+					$stick_after 	  = true;
+				}
+				if ($v == 'stick' && $this->field['name'][$i] != $stick_b && $this->field['name'][$i] == $this->field['option'][$i]) {
+					$stick[] 	 = $this->field['name'][$i];
+					$stick_b 	 = $this->field['name'][$i];
 					$check_stick = true;
 					$stick_after = false;
-			  	}if($v == 'stick' && ($stick_b == '' ||  $this->field['option'][$i] == $stick_b)){
+			  	}
+				if ($v == 'stick' && ($stick_b == '' || $this->field['option'][$i] == $stick_b)) {
 					$stick_value_temp .= $this->field['value'][$i].$_POST[$this->field['name'][$i]];
-					$stick_after = false;
+					$stick_after 	   = false;
 			    }
 			}
 
-			if($check_stick == true){
-				foreach($stick as $ii => $value){
-					
-				  $stick_select     .= 'and`'.$value.'` = \''.$stick_value[$ii].'\'';
-				  $stick_insert_val .= ',\''.$stick_value[$ii].'\'';
-				  $stick_insert .= ',`'.$value.'`';
+			if ($check_stick == true) {
+				foreach ($stick as $ii => $value) {
+					$stick_select     .= 'and`' . $value . '` = \'' . $stick_value[$ii] . '\'';
+				    $stick_insert_val .= ',\'' . $stick_value[$ii] . '\'';
+				    $stick_insert     .= ',`' . $value . '`';
 				}
-				if($check_submit == true){
-					$stick_select = substr($stick_select,3);
-				    $stick_insert_val = substr($stick_insert_val,1);
+				if ($check_submit == true) {
+					$stick_select 	  = substr($stick_select, 3);
+				    $stick_insert_val = substr($stick_insert_val, 1);
 				}
 			}
-			foreach($this->field['type'] as $i => $v){	
-				switch ($v){
-					case('submit'):
-					case('reset'):
-					case('radio'):
-					case('droplist'):
-					case('combobox'):
-					case('hyperlink'):
-					case('hidden'):
-					case('hidden_date'):
-					case('checkbox'):
+
+			foreach ($this->field['type'] as $i => $v) {
+				switch ($v) {
+					case ('submit') :
+					case ('reset') :
+					case ('radio') :
+					case ('droplist') :
+					case ('combobox') :
+					case ('hyperlink') :
+					case ('hidden') :
+					case ('hidden_date') :
+					case ('checkbox') :
 						break;
-					case('tag'):
-						$value_tag=$this->field['value'][$i];
-						$check_tag=true;
-						$index_tag=$i;				
+					case ('tag') :
+						$value_tag = $this->field['value'][$i];
+						$check_tag = true;
+						$index_tag = $i;
 						break;
-					case('img'):
+					case ('img') :
 						$check_img = true;
 						break;
-					/*case('date'):
-						//   $check_img = true;
-						break;*/
-					default:
+					default :
 						$temp = $this->field['name'][$i];
-						//if($this->option($_POST[$temp],$i) == false)
-							//$q=1;
 						break;
 				}
 			}
 			$count      = 1;
 			$count_type = count($this->field['type']);
-			foreach($this->field['type'] as $i => $v){	
-				switch ($v){
-					case('submit'):
+			foreach ($this->field['type'] as $i => $v) {
+				switch ($v) {
+					case ('submit') :
 						$count_type--;
 						break;
-					case('reset'):
+					case ('reset') :
 						$count_type--;
 						break;
-					case('hyperlink'):
+					case ('hyperlink') :
 						$count_type--;
 						break;
-					default:
+					default :
 						break;
 				}
 			}
-				
-			foreach($this->field['type'] as $i => $v)
-	        {	
-				switch ($v){
-					case('submit'):
+
+			foreach ($this->field['type'] as $i => $v) {
+				switch ($v) {
+					case ('submit') :
 						break;
-					case('reset'):
+					case ('reset') :
 						break;
-					case('hyperlink'):
+					case ('hyperlink') :
 						break;
-					case('img'):
-						if ($_FILES[$this->field['name'][$i]]['name']!=''){
-							$imagename = mt_rand(0, 999). preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name'])) ;
-							$source = $_FILES[$this->field['name'][$i]]['tmp_name'];
-							$imagepath = $imagename . '.'.img::findexts($_FILES[$this->field['name'][$i]]['name']);
-							$target = "../upload/".$imagepath ;
+					case ('img') :
+						if ($_FILES[$this->field['name'][$i]]['name'] != '') {
+							$imagename = mt_rand(0, 999) . preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name']));
+							$source    = $_FILES[$this->field['name'][$i]]['tmp_name'];
+							$imagepath = $imagename . '.' . img::findexts($_FILES[$this->field['name'][$i]]['name']);
+							$target    = "../upload/" . $imagepath ;
 							move_uploaded_file($source, $target);
-							if(filesize($target)>504800){
+							if (filesize($target) > 504800) {
 								$check_size = false;
 								unlink($target);
-								$this->error .="<script language=\"javascript\" type=\"text/javascript\">
-												alert('File size selected is larger than 500 kb !')</script>";
-								$pic = '';								
-							}else{
-								$pic='upload/'. $imagepath;								
+								$this->error .= "<script language=\"javascript\" type=\"text/javascript\">" .
+												"alert('File size selected is larger than 500 kb !')</script>";
+								$pic = '';
+							} else {
+								$pic = 'upload/' . $imagepath;
 							}
-						}else{
-							$pic       = 0;							
+						} else {
+							$pic = 0;
 						}
-						if($count < $count_type){ 
-						   //$t   .='`'.$this->field['name'][$i].'`,`width`,`height`,';
-						   $t   .='`'.$this->field['name'][$i].'`,';
-						   $temp = $this->field['name'][$i];
-						   //$val_insert.= '\''.$pic.'\',\''.$modwidth.'\',\''.$modheight.'\',';
-						   $val_insert.= '\''.$pic.'\',';
-						   $u         .='`'.$this->field['name'][$i] .'`=\''.$pic.'\'and';
-						   }
-						   else
-						   {
-						   $t   .='`'.$this->field['name'][$i].'`';
-						   $temp = $this->field['name'][$i];
-						   $val_insert.= '\''.$pic.'\'';
-						   $u         .='`'.$this->field['name'][$i] .'`=\''.$pic.'\'';
+						if ($count < $count_type) {
+							$t   		.= '`' . $this->field['name'][$i] . '`,';
+						    $temp        = $this->field['name'][$i];
+						    $val_insert .= '\'' . $pic . '\',';
+						    $u          .= '`' . $this->field['name'][$i] . '`=\'' . $pic . '\'and';
+						} else {
+							$t   		.= '`' . $this->field['name'][$i] . '`';
+						    $temp 		 = $this->field['name'][$i];
+						    $val_insert .= '\'' . $pic . '\'';
+						    $u          .= '`' . $this->field['name'][$i] . '`=\'' . $pic . '\'';
 						}
                         $count++;
 						break;
-					case('file'):
-						if ($_FILES[$this->field['name'][$i]]['name']!=''){
-							$filename = mt_rand(0, 999). preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name'])) ;
-							$source = $_FILES[$this->field['name'][$i]]['tmp_name'];
-							$ext = img::findexts($_FILES[$this->field['name'][$i]]['name']);
-							$filepath = $filename . '.'.$ext;
-							$target = "../upload/".$filepath ;
-							if( in_array($ext,array('php','php5','exe','cgi','php4'))){
-								$this->error .='You are not allowed to file. <a href="javascript:history.back(-1);">Back</a> <br>';
+					case ('file') :
+						if ($_FILES[$this->field['name'][$i]]['name'] != '') {
+							$filename = mt_rand(0, 999) . preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name']));
+							$source   = $_FILES[$this->field['name'][$i]]['tmp_name'];
+							$ext 	  = img::findexts($_FILES[$this->field['name'][$i]]['name']);
+							$filepath = $filename . '.' . $ext;
+							$target   = "../upload/" . $filepath;
+							if (in_array($ext, array('php', 'php5', 'exe', 'cgi', 'php4'))) {
+								$this->error .= 'You are not allowed to file. <a href="javascript:history.back(-1);">Back</a> <br />';
 								exit;
 							}
 							move_uploaded_file($source, $target);
-							if(filesize($target)>10004800){
+							if (filesize($target) > 10004800) {
 								$check_size = false;
 								unlink($target);
-								$this->error .="<script language=\"javascript\" type=\"text/javascript\">
-												alert('File size selected is larger than 10 MB !')</script>";
-								$file = '';								
-							}else{
-								$file='upload/'. $filepath;								
+								$this->error .= "<script language=\"javascript\" type=\"text/javascript\">" .
+												"alert('File size selected is larger than 10 MB !')</script>";
+								$file = '';
+							} else {
+								$file = 'upload/' . $filepath;
 							}
-						}else{
-							$file       = 0;							
+						} else {
+							$file = 0;
 						}
-						if($count < $count_type){ 
-						   //$t   .='`'.$this->field['name'][$i].'`,`width`,`height`,';
-						   $t   .='`'.$this->field['name'][$i].'`,';
-						   $temp = $this->field['name'][$i];
-						   //$val_insert.= '\''.$pic.'\',\''.$modwidth.'\',\''.$modheight.'\',';
-						   $val_insert.= '\''.$file.'\',';
-						   $u         .='`'.$this->field['name'][$i] .'`=\''.$file.'\'and';
-						 }else{
-						   $t   .='`'.$this->field['name'][$i].'`';
-						   $temp = $this->field['name'][$i];
-						   $val_insert.= '\''.$file.'\'';
-						   $u         .='`'.$this->field['name'][$i] .'`=\''.$file.'\'';
+						if ($count < $count_type) {
+							$t   		.= '`' . $this->field['name'][$i] . '`,';
+							$temp	     = $this->field['name'][$i];
+						    $val_insert .= '\'' . $file . '\',';
+						    $u          .= '`' . $this->field['name'][$i] . '`=\'' . $file . '\'and';
+						} else {
+							$t    		.= '`' . $this->field['name'][$i] . '`';
+						    $temp		 = $this->field['name'][$i];
+						    $val_insert .= '\'' . $file . '\'';
+						    $u          .= '`' . $this->field['name'][$i] . '`=\'' . $file . '\'';
 						}
                         $count++;
 						break;
-					case('tag'):
-						$utf        = $this->db->prepare('SET NAMES utf8');
+					case ('tag') :
+						$utf = $this->db->prepare('SET NAMES utf8');
 						$utf->execute();
-						if ($_POST['tag']!=''){	
-							$tags='';		
-							$table_name=$this->source;
-							foreach ($_POST['tag'] as $key=>$value){
-								$query_all_tag="select * from `tag` where `table_name`='".$table_name."' and `name`='".$value."'";
-								$all_tags       = $this->db->prepare($query_all_tag);
+						if ($_POST['tag'] != '') {
+							$tags		= '';
+							$table_name = $this->source;
+							foreach ($_POST['tag'] as $key => $value) {
+								$query_all_tag = "select * from `tag` where `table_name`='" . $table_name . "' and `name`='" . $value . "'";
+								$all_tags      = $this->db->prepare($query_all_tag);
 								$all_tags->execute();
-								$re_tag     = $all_tags->fetch(PDO::FETCH_ASSOC);
-								
-								
-								if(!empty($re_tag)){
-									$tags.=$re_tag['id'];
-									if ($value != end($_POST['tag']))
-										$tags.=',';
-								}else{
-									$query_tag = "insert into `tag` (`name`,`table_name`) values ('".$value."','".$table_name."')";
-									$insert_tag  = $this->db->prepare($query_tag);
+								$re_tag = $all_tags->fetch(PDO::FETCH_ASSOC);
+								if (!empty($re_tag)) {
+									$tags .= $re_tag['id'];
+									if ($value != end($_POST['tag'])) {
+										$tags .= ',';
+									}
+								} else {
+									$query_tag  = "insert into `tag` (`name`,`table_name`) values ('" . $value . "','" . $table_name . "')";
+									$insert_tag = $this->db->prepare($query_tag);
 									$insert_tag->execute();
-									$tags.= $this->db->lastInsertId();
-									if ($value != end($_POST['tag']))
-										$tags.=',';
+									$tags .= $this->db->lastInsertId();
+									if ($value != end($_POST['tag'])) {
+										$tags .= ',';
+									}
 								}
-																
-							}						
-						}else if($_POST['tag']=='')
-							$tags='';
-							$temp = $this->field['name'][$i];							 				
-							if($count < $count_type){ 												   
-							   $t   .='`'.$this->field['name'][$i].'`, ';						  	
-							   $val_insert.= '\''.$tags.'\', ';						 
-							   $u         .=' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'and ';
-							}else{
-							   $t   .='`'.$this->field['name'][$i].'`';						 
-							   $val_insert.= '\''.$tags.'\'';
-							   $u         .='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
 							}
-									
-						break;			
-				
-					default: 
-						if($count < $count_type && $this->field['maxlen'][$i] != 'stick'){ 
-							
-							$t   .='`'.$this->field['name'][$i].'`,';
-							$temp = $this->field['name'][$i];
-							if($v == 'password'){
-								$val_insert.= '\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\',';
-								$u         .='`'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\'and';
-							}else{
-								if($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'email'){
+						} else if ($_POST['tag'] == '') {
+							$tags = '';
+						}
+						$temp = $this->field['name'][$i];
+						if ($count < $count_type) {
+							$t   		.= '`' . $this->field['name'][$i] . '`, ';
+							$val_insert .= '\'' . $tags . '\', ';
+							$u          .= ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'and ';
+						} else {
+							$t   		.= '`' . $this->field['name'][$i] . '`';
+							$val_insert .= '\'' . $tags . '\'';
+							$u          .= '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+						}
+						break;
+
+					default :
+						if ($count < $count_type && $this->field['maxlen'][$i] != 'stick') {							
+							$t    .= '`' . $this->field['name'][$i] . '`,';
+							$temp  = $this->field['name'][$i];
+							if ($v == 'password') {
+								$val_insert .= '\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\',';
+								$u          .= '`' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\'and';
+							} else {
+								if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'email') {
 									$chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
-									if($chek_mail == false)
+									if ($chek_mail == false) {
 										$this->error .= 'Please enter a valid email address.  <a href="javascript:history.back(-1);">Back</a>';
+									}
 								}
 								if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {
 									$utf = $this->db->prepare('SET NAMES utf8');
 									$utf->execute();
-									$m_query = "select ".$this->field['name'][$i]." from $this->source where `".
-										   $this->field['name'][$i]."`='".$_POST[$temp]."'";
+									$m_query = "select " . $this->field['name'][$i] . " from $this->source where `" .
+											   $this->field['name'][$i] . "`='" . $_POST[$temp] . "'";
 									$stmt    = $this->db->prepare($m_query);
 									$stmt->execute();
 									$result = $stmt->fetch(PDO::FETCH_ASSOC);
 									if ($result != '') {
-										$this->error .= 'This username is available ! <a href="javascript:history.back(-1);">Back</a>'; 
-										$control = false;
+										$this->error .= 'This username is available ! <a href="javascript:history.back(-1);">Back</a>';
+										$control 	  = false;
 									}
 								}
-								$val_insert.= '\''.$_POST[$temp].'\',';
-								$u         .='`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'and';
+								$val_insert .= '\'' . $_POST[$temp] . '\',';
+								$u          .= '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'and';
 							}
-							if($_POST[$temp] == ''){
-								if($this->being_empty[$i] == 0)
+							if ($_POST[$temp] == '') {
+								if ($this->being_empty[$i] == 0) {
 									$chek_empty = true;
-							} 
-						}else{
-							if($this->field['maxlen'][$i] != 'stick'){
-								$t    .='`'.$this->field['name'][$i].'`';
+								}
+							}
+						} else {
+							if ($this->field['maxlen'][$i] != 'stick') {
+								$t    .= '`' . $this->field['name'][$i] . '`';
 								$temp  = $this->field['name'][$i];
-								if($v == 'password'){
-									$val_insert.= '\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\'';
-									$u         .='`'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\'';
+								if ($v == 'password') {
+									$val_insert .= '\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\'';
+									$u          .= '`' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\'';
 									if (array_key_exists($i+2, $this->field['type'])) {
-										$u 			.= ' and ';
+										$u          .= ' and ';
 										$val_insert .= ',';
 									}
 								} else {
@@ -986,7 +979,7 @@ class field {
 											$this->error .= ' Please enter a valid email address. <a href="javascript:history.back(-1);">Back</a>';
 										}
 									}
-									if ($v =='text' and $this->array_member[$this->field['name'][$i]] == 'control') {
+									if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {
 										$utf = $this->db->prepare('SET NAMES utf8');
 										$utf->execute();
 										$m_query = "select " . $this->field['name'][$i] . "from $this->source where `" .
@@ -995,8 +988,8 @@ class field {
 										$stmt->execute();
 										$result = $stmt->fetch(PDO::FETCH_ASSOC);
 										if ($result == '') {
-											$this->error .= 'This username is available ! <a href="javascript:history.back(-1);">Back</a>'; 
-											$control = false;
+											$this->error .= 'This username is available ! <a href="javascript:history.back(-1);">Back</a>';
+											$control      = false;
 										}
 									}
 									$u			.= '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
@@ -1012,7 +1005,7 @@ class field {
 						$count++;
 						break;
 				}
-			}// end foreach
+			}
 
 			$utf = $this->db->prepare('SET NAMES utf8');
 			$utf->execute();
@@ -1040,9 +1033,9 @@ class field {
 					if ($chek_empty == false && $invalid_file == false) {
 						if ($chek_mail == true and $control == true) {
 							if ($q == 0 && $check_size == true) {
-								$myquery = "insert into `$this->source` (".$t.") values (".$val_insert.")";
+								$myquery = "insert into `$this->source` (" . $t . ") values (" . $val_insert . ")";
 								if ($check_stick == true) {
-									$myquery = "insert into `$this->source` (".$t.$stick_insert.") values (".$val_insert.$stick_insert_val.")";
+									$myquery = "insert into `$this->source` (" . $t . $stick_insert . ") values (" . $val_insert . $stick_insert_val . ")";
 								}
 								$stmt = $this->db->prepare($myquery);
 								$bool = $stmt->execute();
@@ -1085,14 +1078,13 @@ class field {
 			$checkbox_fild_name = '';
 			$show_pardis		= '';
 
-			//................................my query.....................
 			$myquery = "select * from `$this->source` order by `order`";
 			$r       = $this->db->prepare($myquery);
 			$r->execute();
 			$result = $r->fetchAll(PDO::FETCH_ASSOC);
 			$count_records = count($result);
 
-		  	foreach ($this->field['name'] as $i => $val) {
+		    foreach ($this->field['name'] as $i => $val) {
 			  	if ($val == 'condition') {
 			  		$condition = $this->field['value'][$i];
 			  	}
@@ -1133,7 +1125,7 @@ class field {
 			}
 
 			$stmt = $this->db->prepare($myquery);
-			$stmt->bindParam(':condition',$condition, PDO::PARAM_INT);
+			$stmt->bindParam(':condition', $condition, PDO::PARAM_INT);
 			$stmt->execute();
 
 			$list_empty = true;
@@ -1154,12 +1146,12 @@ class field {
 					case ('password') :
 						break;
 					case ('img') :
-					  	if ($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick') {
+						if ($this->field['maxlen'][$i] != 'disable' && $this->field['maxlen'][$i] != 'stick') {
 							if ($this->field['upload_img'][$i] === "url") {
 								$arr_not_disable[] = $i;
 								$arr[]       	   = $this->field['name'][$i];
 								$idex_arr[]  	   = $i;
-								$name_img 		   = $this->field['name'][$i];
+								$name_img   	   = $this->field['name'][$i];
 							}
 							$arr_not_disable[] = $i;
 							$check_img 		   = true;
@@ -1285,13 +1277,13 @@ class field {
 				foreach ($drop as $i => $v) {
 					foreach ($re as $ii => $value) {
 						if ($v === $ii) {
-							foreach($this->array_member[$ii] as $iii => $valu) {
-							    	if ($iii == $value) {
-										if (strlen($valu) > 100) {
-											$value = substr(strip_tags($valu), 0, 100) . '...';
-										}
-										$show_pardis .= '<td>' . $valu . '</td>';
+							foreach ($this->array_member[$ii] as $iii => $valu) {
+								if ($iii == $value) {
+									if (strlen($valu) > 100) {
+										$value = substr(strip_tags($valu), 0, 100) . '...';
 									}
+									$show_pardis .= '<td>' . $valu . '</td>';
+								}
 							}
 						}
 					}
@@ -1364,70 +1356,71 @@ class field {
 		}
 		// }}}
 		// {{{ show_update
-		function show_update($id){
-				
-				$utf       = $this->db->prepare('SET NAMES utf8');
+		function show_update($id) {
+
+				$utf = $this->db->prepare('SET NAMES utf8');
 			    $utf->execute();
-				$myquery   = "select * from `$this->source` where `id`= :id";
-				$stmt      = $this->db->prepare($myquery);
-				$stmt->bindParam(':id',$id, PDO::PARAM_INT );
-   				$stmt->execute();				
-   				$row       = $stmt->fetch(PDO::FETCH_ASSOC);
-				foreach($row as $i=>$s){
-				  $row[$i] = stripslashes($s);
-				  foreach($this->field['name'] as $n =>$name)
-				     if($name === $i){
-						  if($this->field['type'][$n] == 'img'){							 
-							  if($row[$i]!=0){								  
-								 list($width, $height) = getimagesize('../'.$row[$i]);
-								 $img = ($width < 500 && $height < 500) ? '../'.$row[$i] : img::check_img('../'.$row[$i],500,500,'../resize/') ;
-								 $this->resualt .='<div style="text-align:center"><br><img name="" src="'.$img.'" style="" /><br></div>';
-						 	  }
-						  } 
-						  
-						  if($this->field['type'][$n] == 'password')
-						  	$this->field['value'][$n] = '';
-						  else						    
-					      	$this->field['value'][$n] = $row[$i];								     
-					 }
+				$myquery = "select * from `$this->source` where `id`= :id";
+				$stmt    = $this->db->prepare($myquery);
+				$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+   				$stmt->execute();
+   				$row = $stmt->fetch(PDO::FETCH_ASSOC);
+				foreach ($row as $i => $s) {
+					$row[$i] = stripslashes($s);
+				    foreach ($this->field['name'] as $n => $name) {
+				    	if ($name === $i) {
+							if ($this->field['type'][$n] == 'img') {
+								if ($row[$i] != 0) {
+									list($width, $height) = getimagesize('../' . $row[$i]);
+									$img = ($width < 500 && $height < 500) ? '../' . $row[$i] : img::check_img('../' . $row[$i], 500, 500, '../resize/');
+								    $this->resualt .= '<div style="text-align:center"><br><img name="" src="' . $img . '" style="" /><br></div>';
+								}
+							}
+
+							if ($this->field['type'][$n] == 'password') {
+							  	$this->field['value'][$n] = '';
+						    } else {
+						      	$this->field['value'][$n] = $row[$i];
+							}
+						}
+					}
 				}
-				 			
-			  	$this->resualt= $this->showform().'</p>
-													</div> <!-- End #tab3 -->
-												  </div> <!-- End .content-box-content -->
-												</div> <!-- End .content-box -->
-											<div class="clear"></div>';
-			
+
+			  	$this->resualt = $this->showform() . '</p>' .
+													 '</div> <!-- End #tab3 -->' .
+												     '</div> <!-- End .content-box-content -->' .
+													 '</div> <!-- End .content-box -->' .
+													 '<div class="clear"></div>';			
 			}
 			// }}}
 			// {{{ func_update
-			function func_update($id){
-				
+			function func_update($id) {
+
 				$this->fixSlashes();
-				if($_GET['method']== 'ajax-checkbox'){
-					$array = split(',',$id);
-					foreach($array as $key => $value){
-				 		db::runQuery("update `$this->source` set ".$this->field['name'][$_GET['key']]." = ".$_GET['value']." where `id`=".(int)$value);
+				if ($_GET['method'] == 'ajax-checkbox') {
+					$array = split(',', $id);
+					foreach ($array as $key => $value) {
+				 		db::runQuery("update `$this->source` set " . $this->field['name'][$_GET['key']] . " = " . $_GET['value'] . " where `id`=" . (int)$value);
 					}
 					echo 'Selected records were edited.';
 					exit;
 				}
-		
-			        $chek_empty      = false;
-				$chek_mail	 = true;
-				$count_type      = count($this->field['type']);
-				$count           = 1;
-				$strselet        ='';
-				$strselect_where ='';
-				$strupdate       ='';
-				$val_insert      = '';
-				$user_select     = '';
-				$user            = '';
-				$pass            = '';
-				$is_account      = false;
-				$pic             = '';
-				$modwidth        = '';
-				$modheight       = '';
+
+		        $chek_empty       = false;
+				$chek_mail	 	  = true;
+				$count_type       = count($this->field['type']);
+				$count            = 1;
+				$strselet         = '';
+				$strselect_where  = '';
+				$strupdate        = '';
+				$val_insert       = '';
+				$user_select      = '';
+				$user             = '';
+				$pass             = '';
+				$is_account       = false;
+				$pic              = '';
+				$modwidth         = '';
+				$modheight        = '';
 				$check_photo      = false;
 				$invalid_file	  = false;
 				$stick            = array();
@@ -1440,92 +1433,88 @@ class field {
 				$stick_b          = '';
 				$check_submit     = false;
 				$stick_after      = false;
-				foreach($this->field['maxlen'] as $i => $v){
-				 if($stick_b != '' &&  $this->field['option'][$i] != $stick_b && $stick_after == false){
-				    if($this->field['type'][$i] == 'submit')
-				        $check_submit = true;
-					$stick_value[] = $stick_value_temp;
-					$stick_value_temp = '';
-					$stick_after = true;
-					
-				 }
-			 	 if($v == 'stick' && $this->field['name'][$i] != $stick_b && $this->field['name'][$i] == $this->field['option'][$i]) {
-					  $stick[] = $this->field['name'][$i];
-					  $stick_b = $this->field['name'][$i];
-					  $check_stick = true;
-					  $stick_after = false;
-			     }
-			  	if($v == 'stick' && ($stick_b == '' ||  $this->field['option'][$i] == $stick_b)){
-			  	     $stick_value_temp .= $this->field['value'][$i].$_POST[$this->field['name'][$i]];
-				     $stick_after = false;				
-			  	}
-			  
-			  
-			}
-			if($check_stick == true){
-				foreach($stick as $ii => $value){
-					 $strselect_where     .= 'and`'.$value.'` = \''.$stick_value[$ii].'\'';
-					 $strupdate .= ',`'.$value.'`=\''.$stick_value[$ii].'\'';
-			 	}
-				$strselect_where = substr($strselect_where,3);
-				$strupdate = substr($strupdate,1);
-				$strselect_where .= ' and ';
-				$strupdate .= ' , ';
-
-			}
-            foreach($this->field['type'] as $i => $v){
-				   switch ($v){
-					   case('submit'):
-						   $count_type--;
-						   break;
-					   case('reset'):
-						   $count_type--;
-						   break;
-					   case('hidden'):
-						   $count_type--;
-						  break;
-					   case('hidden_date'):
-						   $count_type--;
-						   break;
-					   default:
-						  break;
-					} 
-			}  
-			foreach($this->field['type'] as $i => $v){	
-					switch ($v){
-						case('submit'):
+				foreach ($this->field['maxlen'] as $i => $v) {
+					if ($stick_b != '' &&  $this->field['option'][$i] != $stick_b && $stick_after == false) {
+						if ($this->field['type'][$i] == 'submit') {
+					        $check_submit = true;
+						}
+						$stick_value[]    = $stick_value_temp;
+						$stick_value_temp = '';
+						$stick_after 	  = true;
+					}
+			 		if ($v == 'stick' && $this->field['name'][$i] != $stick_b && $this->field['name'][$i] == $this->field['option'][$i]) {
+						$stick[]     = $this->field['name'][$i];
+					    $stick_b     = $this->field['name'][$i];
+					    $check_stick = true;
+					    $stick_after = false;
+			    	}
+					if ($v == 'stick' && ($stick_b == '' || $this->field['option'][$i] == $stick_b)) {
+			  	    	$stick_value_temp .= $this->field['value'][$i].$_POST[$this->field['name'][$i]];
+				    	$stick_after 	   = false;
+			  	    }
+				}
+			    if ($check_stick == true) {
+					foreach ($stick as $ii => $value) {
+						$strselect_where .= 'and`' . $value . '` = \'' . $stick_value[$ii] . '\'';
+					    $strupdate       .= ',`' . $value . '`=\'' . $stick_value[$ii] . '\'';
+			 		}
+					$strselect_where  = substr($strselect_where, 3);
+					$strupdate 		  = substr($strupdate, 1);
+					$strselect_where .= ' and ';
+					$strupdate 	     .= ' , ';
+			    }
+	            foreach ($this->field['type'] as $i => $v) {
+					switch ($v) {
+						case ('submit') :
+							$count_type--;
+						    break;
+					    case ('reset') :
+						    $count_type--;
+						    break;
+					    case ('hidden') :
+						    $count_type--;
+						    break;
+					    case ('hidden_date') :
+							$count_type--;
+						    break;
+					    default :
+						    break;
+					}
+				}
+				foreach ($this->field['type'] as $i => $v) {
+					switch ($v) {
+						case ('submit') :
 							break;
-						case('reset'):
+						case ('reset') :
 							break;
-						case('hidden'):
+						case ('hidden') :
 							break;
-						case('hidden_date'):
+						case ('hidden_date') :
 							break;
-						case('img'):
-							if ($_FILES[$this->field['name'][$i]]['name']!=''){
-								$check_photo = true;  									
-								$imagename = mt_rand(0, 999). preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name'])) ;
-								$source = $_FILES[$this->field['name'][$i]]['tmp_name'];
-								$imagepath = $imagename . '.'.img::findexts($_FILES[$this->field['name'][$i]]['name']);
-								$target = "../upload/".$imagepath ;
+						case ('img') :
+							if ($_FILES[$this->field['name'][$i]]['name'] != '') {
+								$check_photo = true;
+								$imagename   = mt_rand(0, 999) . preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name']));
+								$source 	 = $_FILES[$this->field['name'][$i]]['tmp_name'];
+								$imagepath   = $imagename . '.' . img::findexts($_FILES[$this->field['name'][$i]]['name']);
+								$target 	 = "../upload/" . $imagepath;
 								move_uploaded_file($source, $target);
-								if(filesize($target)>2004800){
+								if (filesize($target) > 2004800) {
 									unlink($target);
-									$this->error .="<script language=\"javascript\" type=\"text/javascript\">
-												alert('File size selected is larger than 2 mb !')</script>";
-								}else{										
-									$pic='upload/'.$imagepath;
+									$this->error .= "<script language=\"javascript\" type=\"text/javascript\">" .
+											   	    "alert('File size selected is larger than 2 mb !')</script>";
+								} else {
+									$pic = 'upload/' . $imagepath;
 								}
-						 	
 
-								if($count <$count_type ){ 								
+								if ($count < $count_type) {
 									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
 											    ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
 									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
 										      ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
 									$strselet  .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
 										      ' `'.$this->field['name'][$i].'` ';
-								}else{							
+								} else {
 									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
 											    ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
 									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :

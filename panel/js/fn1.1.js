@@ -1,36 +1,47 @@
 $(document).ready(function() {
 
 	$(function() {
+
+		var prevOrders  = [];
+
+		// find previous orders
+		$("tbody.sortable tr").each(function() {
+			rowIndex  = $(this).index() + 1;
+			prevOrder = $(this).find("input[name='order']").attr("value");
+			prevOrders[rowIndex] = prevOrder;
+		});
+
 		$(".draggable").draggable({
 			containment: "#containment-wrapper", scroll: false
+		});
+
+		$(".sortable").mouseover(function() {
+			$(this).css("cursor", "move");
 		});
 
 		$(".sortable").sortable({
 			revert: true,
 			start: function(event, ui) {
-				sourceOrder = ui.item.find("input[name='order']").attr("value");
-				sourceId	= ui.item.find("a").attr("row-id");
+				sourceId	= ui.item.find('a[name="delete"]').attr("row-id");
 				sourceIndex = ui.item.context.rowIndex;
 			},
 			stop: function(event, ui) {
 				var orders  = [];
-				targetOrder = ui.item.find("input[name='order']").attr("value");
 				targetIndex = ui.item.context.rowIndex;
 
 				if (targetIndex > sourceIndex) {
 
 					$("tbody.sortable tr").each(function() {
 						rowIndex = $(this).index() + 1;
-						rowId	 = $(this).find("a").attr("row-id");
+						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex >= sourceIndex && rowIndex < targetIndex) {
-							prevOrder = $(this).find("input[name='order']").attr("value");
-							newOrder  = parseInt(prevOrder) - 1;
+							newOrder = prevOrders[rowIndex];
 							$(this).find("input[name='order']").attr("value", newOrder);
 							orders.push({"id": rowId, "order": newOrder});
 						}
 					});
 
-					newOrder = parseInt(targetOrder) + (parseInt(targetIndex) - parseInt(sourceIndex));
+					newOrder = prevOrders[targetIndex];
 					ui.item.find("input[name='order']").attr("value", newOrder);
 					orders.push({"id": sourceId, "order": newOrder});
 
@@ -38,16 +49,15 @@ $(document).ready(function() {
 
 					$("tbody.sortable tr").each(function() {
 						rowIndex = $(this).index() + 1;
-						rowId	 = $(this).find("a").attr("row-id");
+						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex > targetIndex && rowIndex <= sourceIndex) {
-							prevOrder = $(this).find("input[name='order']").attr("value");
-							newOrder  = parseInt(prevOrder) + 1;
+							newOrder = prevOrders[rowIndex];
 							$(this).find("input[name='order']").attr("value", newOrder);
 							orders.push({"id": rowId, "order": newOrder});
 						}
 					});
 
-					newOrder = parseInt(targetOrder) - (parseInt(sourceIndex) - parseInt(targetIndex));
+					newOrder = prevOrders[targetIndex];
 					ui.item.find("input[name='order']").attr("value", newOrder);
 					orders.push({"id": sourceId, "order": newOrder});
 				}
@@ -64,7 +74,6 @@ $(document).ready(function() {
 			}
 		});
 
-		$(".sortable").mouseover(function() { $(this).css("cursor", "move"); });
 	});
 
 	var old_key = 0;
@@ -132,7 +141,7 @@ $(document).ready(function() {
 			var input_id;
 
 			if (data != '' && data != null) {
-				items += data;			
+				items += data;
 			}
 			$('#tab1 table tbody').html(items);
 			$('#overflow').hide();
@@ -197,7 +206,7 @@ function bank_list() {
 		$.getJSON('?page=change_place&type=sub_bank&val=' + vals,function(data) {
 			if (jQuery.isEmptyObject(data)) {
 				$('#tabs-5').html('<ul><p style="width:185px; text-align: center; height:50px; padding-top:20px">موردی یافت نشد</p></ul>' +
-				   				  '<div class="clearfix"></div>');
+								  '<div class="clearfix"></div>');
 				return;
 			}
 
