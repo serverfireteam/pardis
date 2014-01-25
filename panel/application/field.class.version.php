@@ -1064,10 +1064,10 @@ class field {
 						$this->error .= 'Please fill the required fields.  <a href="javascript:history.back(-1);">Back</a>';
 					}
 			}
-		}
-		// }}}
-		// {{{ show_list
-		function show_list() {
+	}
+	// }}}
+	// {{{ show_list
+	function show_list() {
 
 			$check_show_img 	= false;
 			$check_img 			= false;
@@ -1353,10 +1353,10 @@ class field {
 			$show_pardis .= '</div>';
 
 			return $show_pardis;
-		}
-		// }}}
-		// {{{ show_update
-		function show_update($id) {
+	}
+	// }}}
+	// {{{ show_update
+	function show_update($id) {
 
 				$utf = $this->db->prepare('SET NAMES utf8');
 			    $utf->execute();
@@ -1391,10 +1391,10 @@ class field {
 												     '</div> <!-- End .content-box-content -->' .
 													 '</div> <!-- End .content-box -->' .
 													 '<div class="clear"></div>';			
-			}
-			// }}}
-			// {{{ func_update
-			function func_update($id) {
+	}
+	// }}}
+	// {{{ func_update
+	function func_update($id) {
 
 				$this->fixSlashes();
 				if ($_GET['method'] == 'ajax-checkbox') {
@@ -1508,630 +1508,647 @@ class field {
 								}
 
 								if ($count < $count_type) {
-									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
-											    ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
-									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
-										      ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
-									$strselet  .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-										      ' `'.$this->field['name'][$i].'` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ' :
+											    	    ' `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ' :
+										      		    ' `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ';
+									$strselet  		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
 								} else {
-									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
-											    ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
-									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$pic.'\' ' :
-										      ' `'.$this->field['name'][$i] .'`=\''.$pic.'\' ';
-									$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-										     ' `'.$this->field['name'][$i].'` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $pic . '\' ';
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
 								}
-								
+
 								$count++;
-							}else
+							} else {
 								$count_type--;
+							}
 							break;
-						case('file'):
-								$check_file = false;
-							if ($_FILES[$this->field['name'][$i]]['name']!=''){ 	
-								$check_file = true;								
-								$filename = mt_rand(0, 999). preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name'])) ;
-								$source = $_FILES[$this->field['name'][$i]]['tmp_name'];
-								$filepath = $filename . '.'.img::findexts($_FILES[$this->field['name'][$i]]['name']);
-								$target = "../upload/".$filepath ;
-								if( in_array($ext,array('php','php5','exe','cgi','php4'))){
-									$this->error .='You are not allowed to file.<a href="javascript:history.back(-1);">Back</a> <br>';
+						case ('file') :
+							$check_file = false;
+							if ($_FILES[$this->field['name'][$i]]['name'] != '') {
+								$check_file = true;
+								$filename   = mt_rand(0, 999) . preg_replace("/[^a-zA-Z0-9\s]/", "", img::findname($_FILES[$this->field['name'][$i]]['name']));
+								$source     = $_FILES[$this->field['name'][$i]]['tmp_name'];
+								$filepath   = $filename . '.' . img::findexts($_FILES[$this->field['name'][$i]]['name']);
+								$target 	= "../upload/" . $filepath;
+								if (in_array($ext, array('php', 'php5', 'exe', 'cgi', 'php4'))) {
+									$this->error .= 'You are not allowed to file. <a href="javascript:history.back(-1);">Back</a> <br />';
 									exit;
 							    }
 								move_uploaded_file($source, $target);
-								if(filesize($target)>10004800){
+								if (filesize($target) > 10004800) {
 									unlink($target);
-									$this->error .="<script language=\"javascript\" type=\"text/javascript\">
-												alert('File size selected is larger than 10 MB !')</script>";
-								}else{										
-									$file='upload/'.$filepath;
+									$this->error .= "<script language=\"javascript\" type=\"text/javascript\">" .
+												    "alert('File size selected is larger than 10 MB !')</script>";
+								} else {
+									$file = 'upload/' . $filepath;
 								}
 						 	}
-							if($check_file == true){
-								if($count <$count_type ){ 								
-									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$file.'\' ' :
-											    ' `'.$this->field['name'][$i] .'`=\''.$file.'\' ';
-									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$file.'\' ' :
-										      ' `'.$this->field['name'][$i] .'`=\''.$file.'\' ';
-									$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-										     ' `'.$this->field['name'][$i].'` ';
-								}else{							
-									$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$file.'\' ' :
-											    ' `'.$this->field['name'][$i] .'`=\''.$file.'\' ';
-									$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$file.'\' ' :
-										      ' , `'.$this->field['name'][$i] .'`=\''.$file.'\' ';
-									$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-										     ' `'.$this->field['name'][$i].'` ';
+							if ($check_file == true) {
+								if ($count < $count_type) {
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $file . '\' ':
+											    		' `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $file . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+								} else {
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $file . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $file . '\' ' :
+													    ' , `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
 								}
 						    }
 							$count++;
 							break;
 
-						case('tag'):	
-							$utf        = $this->db->prepare('SET NAMES utf8');
+						case ('tag') :
+							$utf = $this->db->prepare('SET NAMES utf8');
 							$utf->execute();
-						
-												
-							
-						$temp = $this->field['name'][$i];						
-						if ($_POST[$temp]!=''){						
-							$tags='';		
-							$table_name=$this->source;												
-							foreach ($_POST[$temp] as $key=>$value){								
-								$query_all_tag="select * from `tag` where `table_name`= '".$table_name."'  and `name`='".$value."'";								
-								$all_tags       = $this->db->prepare($query_all_tag);
-								$all_tags->execute();
-								$re_tag     = $all_tags->fetch(PDO::FETCH_ASSOC);							
-								if(!empty($re_tag)){
-									$tags.=$re_tag['id'];
-									if ($value != end($_POST[$temp]))
-										$tags.=',';
-									
-								}else{
-									$query_tag = "insert into `tag` (`name`,`table_name`) values ('".$value."','".$table_name."')";
-									$insert_tag  = $this->db->prepare($query_tag);
-									$insert_tag->execute();
-									$tags.= $this->db->lastInsertId();
-									if ($value != end($_POST[$temp]))
-										$tags.=',';
+							$temp = $this->field['name'][$i];
+							if ($_POST[$temp] != '') {
+								$tags 	    = '';
+								$table_name = $this->source;
+								foreach ($_POST[$temp] as $key => $value) {
+									$query_all_tag = "select * from `tag` where `table_name`= '" . $table_name . "'  and `name`='" . $value . "'";
+									$all_tags      = $this->db->prepare($query_all_tag);
+									$all_tags->execute();
+									$re_tag = $all_tags->fetch(PDO::FETCH_ASSOC);
+									if (!empty($re_tag)) {
+										$tags .= $re_tag['id'];
+										if ($value != end($_POST[$temp])) {
+											$tags .= ',';
+										}									
+									} else {
+										$query_tag = "insert into `tag` (`name`,`table_name`) values ('" . $value . "','" . $table_name . "')";
+										$insert_tag  = $this->db->prepare($query_tag);
+										$insert_tag->execute();
+										$tags .= $this->db->lastInsertId();
+										if ($value != end($_POST[$temp])) {
+											$tags .= ',';
+										}
+									}
 								}
-						}		
-							if($count < $count_type){ 												   
-								$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-									     ' `'.$this->field['name'][$i].'` ';
+								if ($count < $count_type) {
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ' :
+												        ' `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ';
+								} else {
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $tags . '\' ';
+								}
 
-								$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$tags.'\' ' :
-										    ' `'.$this->field['name'][$i] .'`=\''.$tags.'\' ';
-								$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$tags.'\' ' :
-									      ' `'.$this->field['name'][$i] .'`=\''.$tags.'\' ';
-							} else {
-								$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-									     ' `'.$this->field['name'][$i].'` ';
-								$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$tags.'\' ' :
-										    ' `'.$this->field['name'][$i] .'`=\''.$tags.'\' ';
-								$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$tags.'\' ' :
-									      ' `'.$this->field['name'][$i] .'`=\''.$tags.'\' ';
-							}							
-													
-						}else if($_POST[$temp]==''){													 				
-							if($count < $count_type){ 												   
-								$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-									     ' `'.$this->field['name'][$i].'` ';
-								$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-										    ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-								$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-									      ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-							} else {
-								$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-									     ' `'.$this->field['name'][$i].'` ';
-								$strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-										    ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-								$strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-									      ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
+							} else if ($_POST[$temp] == '') {
+								if ($count < $count_type) {
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+									      			    ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+								} else {
+									$strselet 		 .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+													    ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+								}
 							}
-						}
-						break;		
-									
 							break;
-						default:
-							if($count <$count_type){ 								    
-								 if($this->field['maxlen'][$i] != 'stick'){										
-									$strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-												   ' `'.$this->field['name'][$i].'` ';
-									$temp = $this->field['name'][$i];
-									if($v == 'password'){
-										$is_account = true;
-										$strupdate .= ($strupdate) ?
-										' , `'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ' : ' `'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ';
-									        $strselect_where .= ($strselect_where) ?
-									' and `'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ' :
-									'`'.$this->field['name'][$i] .'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ';
-										$pass = " and `".$temp."` = '".md5(md5($_POST[$temp].'hash password').'w1e3c3')."'";
-									}else{
-										if($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'email'){
-										   $chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
-										   if ($chek_mail == false) {
-											   $this->error .= 'Please enter a valid email address <a href="javascript:history.back(-1);">Back</a>';
-										   } else if (strcmp($temp, 'username') == 0) {
-											 $user_select = $this->field['name'][$i];
-											 $user = '`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-										   }
-										 }
-										 if($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control'){
-											   
-											   $user_select = $this->field['name'][$i];
-											   $user = '`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-										 }
-										 $strselect_where .= ($strselect_where) ?
-											' and `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-											' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-										 $strupdate .= ($strupdate) ?
-											       ' , `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ' :
-											       ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-									  }
-									 if($_POST[$temp] == ''){
-										if($this->being_empty[$i] == 1)
+						default :
+							if ($count < $count_type) {
+								if ($this->field['maxlen'][$i] != 'stick') {
+									$strselet .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$temp      = $this->field['name'][$i];
+									if ($v == 'password') {
+										$is_account 	  = true;
+										$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' .
+															md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ' :
+														    ' `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ';
+								        $strselect_where .= ($strselect_where) ?
+															' and `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ' :
+															'`' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ';
+										$pass 			  = " and `" . $temp . "` = '" . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . "'";
+									} else {
+										if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'email') {
+											$chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
+											if ($chek_mail == false) {
+												$this->error .= 'Please enter a valid email address. <a href="javascript:history.back(-1);">Back</a>';
+										    } else if (strcmp($temp, 'username') == 0) {
+												$user_select = $this->field['name'][$i];
+												$user 		 = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+										    }
+										}
+										if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {											   
+											$user_select = $this->field['name'][$i];
+											$user 		 = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+										}
+										$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+															' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+										$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+													        ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+									}
+									if ($_POST[$temp] == '') {
+										if ($this->being_empty[$i] == 1) {
 											$chek_empty = false;
-										else 
+										} else {
 											$chek_empty = true;
-									 }
-								  }
-							}else{
-								if($this->field['maxlen'][$i] != 'stick'){
-									  $strselet .= ($strselet) ? ' , `'.$this->field['name'][$i].'` ' :
-										       ' `'.$this->field['name'][$i].'` ';
-									  $temp = $this->field['name'][$i];
-									  if($v == 'password'){
-										  $is_account = true;
-										  $strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .
-												'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ' :
-												' `'.$this->field['name'][$i] .
-												'`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ';
-										  $strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .
-												      '`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ' :
-												      ' `'.$this->field['name'][$i] .
-												      '`=\''.md5(md5($_POST[$temp].'hash password').'w1e3c3').'\' ';
-										  $pass = " and `".$temp."` = '".md5(md5($_POST[$temp].'hash password').'w1e3c3')."'";
-									  }else{
-										  if($v == 'text' and $this->array_member == 'email'){
-												$chek_mail = (!empty($_POST[$temp])) ?
-													     $this->checkEmail($_POST[$temp]) : true;
-												if($chek_mail == false) {
-													$this->error .= 'Please enter a valid email address <a href="javascript:history.back(-1);">Back</a>';
-												} else if (strcmp($temp, 'username') == 0) {
-												   $user_select = $this->field['name'][$i];
-												   $user = '`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-												}
-										  }  
-										  if($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control'){
-											   $user_select = $this->field['name'][$i];
-											   $user = '`'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\'';
-										  }
-										  $strselect_where .= ($strselect_where) ? ' and `'.$this->field['name'][$i] .
-												      '`=\''.$_POST[$temp].'\' ' :
-												      ' `'.$this->field['name'][$i] .'`=\''.$_POST[$temp].'\' ';
-										  $strupdate .= ($strupdate) ? ' , `'.$this->field['name'][$i] .
-													       '`=\''.$_POST[$temp].'\' ' :
-													       ' `'.$this->field['name'][$i].'`=\''.$_POST[$temp].'\' ';
-									  }
-									  if($_POST[$temp] == ''){
-										if($this->being_empty[$i] == 1)
+										}
+									}
+								}
+							} else {
+								if ($this->field['maxlen'][$i] != 'stick') {
+									$strselet .= ($strselet) ? ' , `' . $this->field['name'][$i] . '` ' : ' `' . $this->field['name'][$i] . '` ';
+									$temp 	   = $this->field['name'][$i];
+									if ($v == 'password') {
+										$is_account 	  = true;
+										$strupdate 		 .= ($strupdate) ?
+														    ' , `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ' :
+														    ' `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ';
+										$strselect_where .= ($strselect_where) ?
+														    ' and `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ' :
+												      		' `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ';
+										$pass 			  = " and `" . $temp . "` = '" . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . "'";
+									} else {
+								    	if ($v == 'text' and $this->array_member == 'email') {
+											$chek_mail = (!empty($_POST[$temp])) ? $this->checkEmail($_POST[$temp]) : true;
+											if ($chek_mail == false) {
+												$this->error .= 'Please enter a valid email address. <a href="javascript:history.back(-1);">Back</a>';
+											} else if (strcmp($temp, 'username') == 0) {
+										    	$user_select = $this->field['name'][$i];
+												$user 	     = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+											}
+										}
+										if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {
+											$user_select = $this->field['name'][$i];
+											$user 		 = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
+										}
+										$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+												      		' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+										$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ' :
+													        ' `' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\' ';
+									}
+									if ($_POST[$temp] == '') {
+										if ($this->being_empty[$i] == 1) {
 											$chek_empty = false;
-										else 
-											$chek_empty = true;	
-									  }
-								 }
+										} else {
+											$chek_empty = true;
+										}
+									}
+								}
 							}
 							$count++;
-							break; 
+							break;
 					}
-			}
-				if($check_submit == true){
-				   $strselect_where = substr($strselect_where,0,-3);
-				   
-				   $strselet = substr($strselet,0,-1);
-				   $strupdate = substr($strupdate,0,-1);
 				}
-				
+
+				if ($check_submit == true) {
+					$strselect_where = substr($strselect_where, 0, -3);
+				    $strselet 		 = substr($strselet, 0, -1);
+				    $strupdate 		 = substr($strupdate, 0, -1);
+				}
+
 				if ($invalid_file == false) {
 
-				$utf = $this->db->prepare('SET NAMES utf8');
-				$utf->execute();
-			        $query = "select $strselet from `$this->source` where ".$strselect_where." AND `id` = :id";
-				$stmt  = $this->db->prepare($query);
-				$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-				$stmt->execute();
-				$row   = $stmt->fetch(PDO::FETCH_ASSOC);
-				if($row[$this->field['name']['0']] == ''){
-					if($chek_empty == false) {
-						if ($chek_mail == true) {
-							$utf        = $this->db->prepare('SET NAMES utf8');
-							$utf->execute();
-							if( $is_account == true) {
-						        	$m_query = "select ".$user_select." from $this->source where ".$user." AND `id` != :id";
-								$stmt    = $this->db->prepare($m_query);
-								$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-								$stmt->execute();
-								$result     = $stmt->fetch(PDO::FETCH_ASSOC);
-								if($result != ''){
-									$this->error .= 'This username is available ! '; 
-									$control      = false;
-								}else{
-								    $myquery = "update `$this->source` set $strupdate where `id`=:id";
-									$stmt    = $this->db->prepare($myquery);
-									$stmt->bindParam(':id',$id, PDO::PARAM_INT );
-									$bool = $stmt->execute();
-									if($bool == 1)
-										$this->successfull .= 'The record was updated successfully <a href="javascript:history.go(-2);">Back</a>';
-								    else 
-								   		$this->error .= 'Unfortunately it is not possible to update this record <a href="javascript:history.back(-1);">Back</a>';
-								 }
-							}else{
-							     $myquery = "update `$this->source` set $strupdate where `id`='$id'";
-								 $stmt    = $this->db->prepare($myquery);
-								 $bool = $stmt->execute();
-								 if($bool == 1)
-									$this->successfull .= 'The record was updated successfully <a href="javascript:history.go(-2);">Back</a>';
-								 else 
-							 		$this->error .= 'Unfortunately it is not possible to update this record <a href="javascript:history.back(-1);">Back</a>';
-							 }
+					$utf = $this->db->prepare('SET NAMES utf8');
+					$utf->execute();
+
+			        $query = "select $strselet from `$this->source` where " . $strselect_where . " AND `id` = :id";
+					$stmt  = $this->db->prepare($query);
+					$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+					$stmt->execute();
+					$row = $stmt->fetch(PDO::FETCH_ASSOC);
+					if ($row[$this->field['name']['0']] == '') {
+						if ($chek_empty == false) {
+
+							if ($chek_mail == true) {
+								$utf = $this->db->prepare('SET NAMES utf8');
+								$utf->execute();
+								if ($is_account == true) {
+						        	$m_query = "select " . $user_select . " from $this->source where " . $user . " AND `id` != :id";
+									$stmt    = $this->db->prepare($m_query);
+									$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+									$stmt->execute();
+									$result = $stmt->fetch(PDO::FETCH_ASSOC);
+									if ($result != '') {
+										$this->error .= 'This username is available ! ';
+										$control      = false;
+									} else {
+									    $myquery = "update `$this->source` set $strupdate where `id`=:id";
+										$stmt    = $this->db->prepare($myquery);
+										$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+										$bool = $stmt->execute();
+										if ($bool == 1) {
+											$this->successfull .= 'The record was updated successfully. <a href="javascript:history.go(-2);">Back</a>';
+								    	} else {
+									   		$this->error .= 'Unfortunately it is not possible to update this record. <a href="javascript:history.back(-1);">Back</a>';
+										}
+								    }
+								} else {
+							    	$myquery = "update `$this->source` set $strupdate where `id`='$id'";
+								 	$stmt    = $this->db->prepare($myquery);
+								 	$bool    = $stmt->execute();
+								    if ($bool == 1) {
+										$this->successfull .= 'The record was updated successfully. <a href="javascript:history.go(-2);">Back</a>';
+								    } else {
+								 		$this->error .= 'Unfortunately it is not possible to update this record. <a href="javascript:history.back(-1);">Back</a>';
+									}
+							    }
+							}
+
+						} else {
+							$this->error .= 'Please fill the required fields.  <a href="javascript:history.back(-1);">Back</a>';
 						}
-
 					} else {
-						$this->error .= 'Please fill the required fields  <a href="javascript:history.back(-1);">Back</a>';
+						$this->error .= 'These records are available. <a href="javascript:history.back(-1);">Back</a>';
 					}
-				} else {
-					$this->error .= 'These records are available <a href="javascript:history.back(-1);">Back</a>';
 				}
-
-				}
-	        }
-			// }}}
-			// {{{ show_delete
-			function show_delete($id) {
-				$this->resualt.='<div class="content-box column-right">
-										<div class="content-box-header">				
-										 <h3>remove a item</h3>					
-										</div> <!-- End .content-box-header -->
-										<div class="content-box-content">
-										<div class="tab-content default-tab">';
-				 $this->resualt .= '<fieldset>
-			 						<p>Are you sure?</p>';
-				 $this->resualt .= '<p>
-			 						<a  class="button_ok" style="width:35px;text-align:center;" href="?page='.$_GET['page'].'&action=delete&id='.$id.'">delete </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<a class="button" style="width:35px;text-align:center;" href="?page='.$_GET['page'].'&action=pardis">back</a>									
-								</p>
-								</fieldset>
-										</div> <!-- End #tab3 -->
-										</div> <!-- End .content-box-content -->
-										</div> <!-- End .content-box -->
-										<div class="clear"></div>'; 
-			
+	}
+	// }}}
+	// {{{ show_delete
+	function show_delete($id) {
+		$this->resualt .= '<div class="content-box column-right">' .
+						  '<div class="content-box-header">' .
+						  '<h3>remove a item</h3>' .
+						  '</div> <!-- End .content-box-header -->' .
+						  '<div class="content-box-content">' .
+						  '<div class="tab-content default-tab">';
+		$this->resualt .= '<fieldset><p>Are you sure?</p>';
+		$this->resualt .= '<p>' .
+	 					  '<a class="button_ok" style="width:35px;text-align:center;" href="?page=' . $_GET['page'] .
+						  '&action=delete&id=' . $id . '">delete </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
+						  '<a class="button" style="width:35px;text-align:center;" href="?page=' . $_GET['page'] . '&action=pardis">back</a>' .
+						  '</p>' .
+						  '</fieldset>' .
+						  '</div> <!-- End #tab3 -->' .
+						  '</div> <!-- End .content-box-content -->' .
+						  '</div> <!-- End .content-box -->' .
+						  '<div class="clear"></div>';
+	}
+	// }}}
+	// {{{ func_delete
+	function func_delete($id) {
+		if ($_GET['method'] == 'ajax-checkbox') {
+		 	$array = split(',', $id);
+			foreach ($array as $key => $value) {
+				$where .= ($where != '') ? 'or' : '';
+				$where .= " `id` = '" . (int)$value . "'" ;
 			}
-			// }}}
-			// {{{ func_delete
-			function func_delete($id){
-				 if($_GET['method'] == 'ajax-checkbox'){
-				 	$array = split(',',$id);
-					foreach($array as $key => $value){
-						$where .= ($where != '') ? 'or' : '';
-						$where .= " `id` = '".(int)$value."'" ;
-					}
-				 }else{
-				 	$where = ' `id`='.(int)$id;
-				 }
-
-				 $myquery = "delete from `$this->source` where ".$where;
-				 $stmt    = $this->db->prepare($myquery);
-   				 $bool = $stmt->execute();
-				 if($bool == 1){
-				 	if($_GET['method']=='ajax'){
-				    	echo 'The record was successfully deleted.';
-						exit;
-					}elseif($_GET['method']=='ajax-checkbox'){
-						echo 'The selected record has been deleted';
-						exit;
-					}else
-						$this->successfull .= 'The record was successfully deleted.';
-				 }else{
-				 	if($_GET['method']=='ajax'){
-				    	echo 'Unfortunately it is not possible to delete the record';
-						exit;
-				 	}elseif($_GET['method']=='ajax-checkbox'){
-						echo 'Unfortunately it is not possible to delete the record';
-						exit;
-					}else
-						$this->error .= 'Unfortunately it is not possible to delete the record';
-				 }
-			  }
-			  // }}}
-			// {{{ option
-			function option($value,$i){				
-				 $type = gettype($value);
-				 $this->field['option'][$i];
-				 if($this->field['option'][$i] == $type)
-					return true;
-				 else  return false;
-			}
-			// }}}
-			// {{{ selet_items
-			function selet_items($table,$column,$field){				
-				 $utf     = $this->db->prepare('SET NAMES utf8');
-				 $utf->execute();
-				 $myquery = "select distinct `$column` from `$table`";
-				 $stmt    = $this->db->prepare($myquery);
-				 $stmt->execute();
-				 $arr     = array();
-				 $row     = $stmt->fetchAll();
-				 $t       = NULL;
-				 foreach($row as $i=> $val){
-					   $t = $i;
-					   $arr[$field][] = $val[$column];
-				  } 
-				 if(is_null($t))
-					return;
-				 return $arr[$field];	 
-			}
-			// }}}
-			// {{{ selet_items2
-			function selet_items2($table,$column1,$column2,$field) {
-				 $utf     = $this->db->prepare('SET NAMES utf8');
-				 $utf->execute();
-				 $myquery = "select distinct `$column1`,`$column2` from `$table`";
-				 $stmt    = $this->db->prepare($myquery);
-				 $stmt->execute();
-				 $arr     = array();
-				 $t       = NULL;
-				 while($row       = $stmt->fetch(PDO::FETCH_ASSOC)){
-				   $arr[$field][$row[$column1]] = $row[$column2];
-				   $t = $row[$column1];
-				 }
-				 if(is_null($t))
-					return;
-				 return $arr[$field];	 
-			}
-			// }}}
-			// {{{ selet_items_parent
-			function selet_items_parent($table,$id,$parent){
-				 $utf     = $this->db->prepare('SET NAMES utf8');
-				 $utf->execute();
-				 $sth	= $this->db->prepare("SELECT * FROM `$table` where $parent = 0  ORDER BY `$id` asc");
-				 $sth->execute();
-				 $category = $sth->fetchAll();
-  				 foreach($category as $key => $value){
-					$sth	= $this->db->prepare("SELECT * FROM `$table` where $parent = ".$value[$id]."  ORDER BY `$id` DESC");
-					$sth->execute();
-					$category[$key]['sub'] =  $sth->fetchAll();
-  				 }				 
-				 return $category;	 
-			}
-			// }}}
-			// {{{ checkEmail
-			function checkEmail($email22) {
-				if (!preg_match("/^[a-z0-9]+([_\\.-][a-z0-9]+)*@([a-z0-9]+([\.-][a-z0-9]+)*)+\\.[a-z]{2,}$/i", $email22)){
-				   return false;
-				}else
-				   return true;				
-			}
-			// }}}
-			// {{{ return_editor
-			function return_editor() {
-			 return 'tinyMCE.init({
-					// General options
-					
-					mode : "textareas",
-					editor_selector : "textarea",
-					theme : "advanced",
-					
-        			
-
-					plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
-				
-					// Theme options
-					theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
-					theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
-					theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
-					theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
-					theme_advanced_toolbar_location : "top",
-					theme_advanced_toolbar_align : "left",
-					theme_advanced_statusbar_location : "bottom",
-					theme_advanced_resizing : true,
-				
-					// Example content CSS (should be your site CSS)
-					//content_css : "css/example.css",
-				
-					// Drop lists for link/image/media/template dialogs
-					template_external_list_url : "js/template_list.js",
-					external_link_list_url : "js/link_list.js",
-					external_image_list_url : "js/image_list.js",
-					media_external_list_url : "js/media_list.js",
-				
-					// Replace values for the template plugin
-					template_replace_values : {
-						username : "Some User",
-						staffid : "991234"
-					}
-				})';
-            }
-			// }}}
-			// {{{ selet_items3
-			function selet_items3($table,$column1,$column2,$field,$condition){
-				 $utf     = $this->db->prepare('SET NAMES utf8');
-				 $utf->execute();
-				 $myquery = "select distinct `$column1`,`$column2` from `$table` where ".$condition;
-				 $stmt    = $this->db->prepare($myquery);
-				 $stmt->execute();
-				 $arr     = array();
-				 $t       = NULL;
-				 while($row       = $stmt->fetch(PDO::FETCH_ASSOC)){
-				   $arr[$field][$row[$column1]] = $row[$column2];
-				   $t = $row[$column1];
-				 }
-				 if(is_null($t))
-					return;
-				 return $arr[$field];	 
-			}
-			// }}}
-			// {{{ upload_img
-			function upload_img($t,$val) {
-			}
-			// }}}
-			// {{{ join_tables
-		 	function join_tables($tables,$fields,$add_con = '',$show_clmn = '*'){ 
-		  		$str_tables = '';
-				$str_con = '';
-				$str_clmn = '';
-				$tbl = array();
-				$fld = array();
-		   
-			   foreach($tables as $i => $val){
-				 $tbl[] = $i;
-				 $tbl[] = $val;
-			   }
-			   foreach($fields as $i => $val){
-				 $fld[] = $i;
-				 $fld[] = $val;
-			   }
-			   $num = sizeof($tbl);
-			   $num--;
-			   foreach($tbl as $i => $val){		   
-				 if($i == $num)
-					$str_tables .= '`'.$val.'`';
-				 else
-					$str_tables .= '`'.$val.'`,';
-			   }
-			  foreach($fld as $i => $val){
-					if($i%2 == 0){
-						$str_con .= 'and'.$tbl[$i].'.'.$fld[$i].'=';
-					}else{
-						$str_con .= ''.$tbl[$i].'.'.$fld[$i].'';
-					}			
-			   }
-			  $str_con = substr($str_con, 3);
-			  if($add_con != ''){
-				 $str_con .= 'and';
-				 foreach($add_con as $i => $val){
-					$str_con .= '\''.$i.'\' = \''.$val.'\'and';
-				 }
-				 $str_con = substr($str_con, -3);
-			  }
-			if($show_clmn != '*'){
-				$num = count($show_clmn);
-				$num--;
-			foreach($show_clmn as $i => $val){
-				if($i == $num ){
-					$str_clmn .= '\''.$show_clmn[$i].'\'';
-				}else{
-					$str_clmn .= '\''.$show_clmn[$i].'\'';
-				}
-			}
-			}
-		   $str = "select $show_clmn from $str_tables where $str_con";
-		   $stmt    = $this->db->prepare($str);
-		   $stmt->execute();
-		   return $stmt->fetchAll();
-		   	}
-			// }}}
-
-		// {{{ buildGoogleDriveService
-		// Google Drive functions
-		/**
-		 * Google Drive Build Service
-		 */
-		function buildGoogleDriveService() {
-			$DRIVE_SCOPE			  = 'https://www.googleapis.com/auth/drive';
-			$SERVICE_ACCOUNT_EMAIL		  = '1090424424188-mlu1692fseovcrg7clfeojrfkpgj358b@developer.gserviceaccount.com';
-			$SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'application/googleDrive/2ce3ce00f0b9b6e11f3d5bf087f88f7a22d7d577-privatekey.p12';
-
-			$key  = file_get_contents($SERVICE_ACCOUNT_PKCS12_FILE_PATH);
-			$auth = new Google_AssertionCredentials($SERVICE_ACCOUNT_EMAIL, array($DRIVE_SCOPE), $key);
-
-			$client = new Google_Client();
-			$client->setUseObjects(true);
-			$client->setAssertionCredentials($auth);
-
-			return new Google_DriveService($client);
+		} else {
+		 	$where = ' `id`=' . (int)$id;
 		}
-		// }}}
 
-		// {{{ insertGoogleDriveFile
-		/**
-		 * Insert new file.
-		 *
-	 	 * @param Google_DriveService $service Drive API service instance.
-		 * @param string $title Title of the file to insert, including the extension.
-		 * @param string $description Description of the file to insert.
-		 * @param string $parentId Parent folder's ID.
-		 * @param string $mimeType MIME type of the file to insert.
-		 * @param string $filename Filename of the file to insert.
-		 * @return Google_DriveFile The file that was inserted. NULL is returned if an API error occurred.
-		 */
-		function insertGoogleDriveFile($service, $title, $description, $parentId, $mimeType, $filename) {
-			$file = new Google_DriveFile();
-			$file->setTitle($title);
-			$file->setDescription($description);
-			$file->setMimeType($mimeType);
-
-			// Set the parent folder.
-			if ($parentId != null) {
-				$parent = new ParentReference();
-				$parent->setId($parentId);
-				$file->setParents(array($parent));
+		$myquery = "delete from `$this->source` where " . $where;
+		$stmt    = $this->db->prepare($myquery);
+   		$bool 	  = $stmt->execute();
+		if ($bool == 1) {
+			if ($_GET['method'] == 'ajax') {
+		    	echo 'The record was successfully deleted.';
+				exit;
+			} elseif ($_GET['method'] == 'ajax-checkbox') {
+				echo 'The selected record has been deleted.';
+				exit;
+			} else {
+				$this->successfull .= 'The record was successfully deleted.';
 			}
+		} else {
+			if ($_GET['method'] == 'ajax') {
+		    	echo 'Unfortunately it is not possible to delete the record.';
+				exit;
+		 	} elseif ($_GET['method'] == 'ajax-checkbox') {
+				echo 'Unfortunately it is not possible to delete the record.';
+				exit;
+			} else {
+				$this->error .= 'Unfortunately it is not possible to delete the record.';
+			}
+		}
+	}
+	// }}}
+	// {{{ option
+	function option($value, $i) {
+		$type = gettype($value);
+		$this->field['option'][$i];
+		if ($this->field['option'][$i] == $type) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	// }}}
+	// {{{ selet_items
+	function selet_items($table, $column, $field) {
 
-			try {
-				$data = file_get_contents($filename);
-				$createdFile = $service->files->insert($file, array(
+		$utf = $this->db->prepare('SET NAMES utf8');
+		$utf->execute();
+
+		$myquery = "select distinct `$column` from `$table`";
+		$stmt    = $this->db->prepare($myquery);
+		$stmt->execute();
+
+		$arr = array();
+		$row = $stmt->fetchAll();
+		$t   = NULL;
+		foreach ($row as $i => $val) {
+			$t 			   = $i;
+			$arr[$field][] = $val[$column];
+		}
+
+		if (is_null($t)) {
+			return;
+		}
+
+		return $arr[$field];
+	}
+	// }}}
+	// {{{ selet_items2
+	function selet_items2($table, $column1, $column2, $field) {
+
+		$utf = $this->db->prepare('SET NAMES utf8');
+		$utf->execute();
+
+		$myquery = "select distinct `$column1`,`$column2` from `$table`";
+		$stmt    = $this->db->prepare($myquery);
+		$stmt->execute();
+
+		$arr = array();
+		$t   = NULL;
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$arr[$field][$row[$column1]] = $row[$column2];
+			$t 						     = $row[$column1];
+		}
+
+		if (is_null($t)) {
+			return;
+		}
+
+		return $arr[$field];
+	}
+	// }}}
+	// {{{ selet_items_parent
+	function selet_items_parent($table, $id, $parent) {
+
+		$utf = $this->db->prepare('SET NAMES utf8');
+		$utf->execute();
+
+		$sth = $this->db->prepare("SELECT * FROM `$table` where $parent = 0  ORDER BY `$id` asc");
+		$sth->execute();
+		$category = $sth->fetchAll();
+		foreach ($category as $key => $value) {
+			$sth = $this->db->prepare("SELECT * FROM `$table` where $parent = " . $value[$id] . "  ORDER BY `$id` DESC");
+			$sth->execute();
+			$category[$key]['sub'] = $sth->fetchAll();
+		}
+
+	    return $category;
+	}
+	// }}}
+	// {{{ checkEmail
+	function checkEmail($email22) {
+		if (!preg_match("/^[a-z0-9]+([_\\.-][a-z0-9]+)*@([a-z0-9]+([\.-][a-z0-9]+)*)+\\.[a-z]{2,}$/i", $email22)) {
+			return false;
+		} else {
+		   return true;
+		}
+	}
+	// }}}
+	// {{{ return_editor
+	function return_editor() {
+
+		return 'tinyMCE.init({
+				// General options
+				mode : "textareas",
+				editor_selector : "textarea",
+				theme : "advanced",
+
+				plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+
+				// Theme options
+				theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+				theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+				theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+				theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
+				theme_advanced_toolbar_location : "top",
+				theme_advanced_toolbar_align : "left",
+				theme_advanced_statusbar_location : "bottom",
+				theme_advanced_resizing : true,
+
+				// Example content CSS (should be your site CSS)
+				//content_css : "css/example.css",
+
+				// Drop lists for link/image/media/template dialogs
+				template_external_list_url : "js/template_list.js",
+				external_link_list_url : "js/link_list.js",
+				external_image_list_url : "js/image_list.js",
+				media_external_list_url : "js/media_list.js",
+
+				// Replace values for the template plugin
+				template_replace_values : {
+					username : "Some User",
+					staffid : "991234"
+				}
+			})';
+	}
+	// }}}
+	// {{{ selet_items3
+	function selet_items3($table, $column1, $column2, $field, $condition) {
+
+		$utf = $this->db->prepare('SET NAMES utf8');
+		$utf->execute();
+
+		$myquery = "select distinct `$column1`,`$column2` from `$table` where " . $condition;
+		$stmt    = $this->db->prepare($myquery);
+		$stmt->execute();
+
+		$arr = array();
+		$t   = NULL;
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$arr[$field][$row[$column1]] = $row[$column2];
+			$t 							 = $row[$column1];
+		}
+
+		if (is_null($t)) {
+			return;
+		}
+
+		return $arr[$field];
+	}
+	// }}}
+	// {{{ upload_img
+	function upload_img($t, $val) {
+	}
+	// }}}
+	// {{{ join_tables
+ 	function join_tables($tables, $fields, $add_con = '', $show_clmn = '*') {
+
+		$str_tables = '';
+		$str_con    = '';
+		$str_clmn   = '';
+		$tbl	    = array();
+		$fld 	    = array();
+
+		foreach ($tables as $i => $val) {
+			$tbl[] = $i;
+			$tbl[] = $val;
+		}
+
+		foreach ($fields as $i => $val) {
+			$fld[] = $i;
+			$fld[] = $val;
+		}
+
+		$num = sizeof($tbl);
+	    $num--;
+		foreach ($tbl as $i => $val) {
+			if ($i == $num) {
+				$str_tables .= '`' . $val . '`';
+			} else {
+				$str_tables .= '`' . $val . '`,';
+			}
+		}
+
+		foreach ($fld as $i => $val) {
+			if ($i % 2 == 0) {
+				$str_con .= 'and' . $tbl[$i] . '.' . $fld[$i] . '=';
+			} else {
+				$str_con .= '' . $tbl[$i] . '.' . $fld[$i] . '';
+			}
+		}
+
+		$str_con = substr($str_con, 3);
+	    if ($add_con != '') {
+			$str_con .= 'and';
+			foreach ($add_con as $i => $val) {
+				$str_con .= '\'' . $i . '\' = \'' . $val . '\'and';
+			}
+			$str_con = substr($str_con, -3);
+		}
+
+		if ($show_clmn != '*') {
+			$num = count($show_clmn);
+			$num--;
+			foreach ($show_clmn as $i => $val) {
+				if ($i == $num) {
+					$str_clmn .= '\'' . $show_clmn[$i] . '\'';
+				} else {
+					$str_clmn .= '\'' . $show_clmn[$i] . '\'';
+				}
+			}
+		}
+
+		$str  = "select $show_clmn from $str_tables where $str_con";
+	    $stmt = $this->db->prepare($str);
+		$stmt->execute();
+
+	    return $stmt->fetchAll();
+	}
+	// }}}
+
+	// {{{ buildGoogleDriveService
+	// Google Drive functions
+	/**
+	 * Google Drive Build Service
+	 */
+	function buildGoogleDriveService() {
+
+		$DRIVE_SCOPE			  = 'https://www.googleapis.com/auth/drive';
+		$SERVICE_ACCOUNT_EMAIL		  = '1090424424188-mlu1692fseovcrg7clfeojrfkpgj358b@developer.gserviceaccount.com';
+		$SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'application/googleDrive/2ce3ce00f0b9b6e11f3d5bf087f88f7a22d7d577-privatekey.p12';
+
+		$key  = file_get_contents($SERVICE_ACCOUNT_PKCS12_FILE_PATH);
+		$auth = new Google_AssertionCredentials($SERVICE_ACCOUNT_EMAIL, array($DRIVE_SCOPE), $key);
+
+		$client = new Google_Client();
+		$client->setUseObjects(true);
+		$client->setAssertionCredentials($auth);
+
+		return new Google_DriveService($client);
+	}
+	// }}}
+
+	// {{{ insertGoogleDriveFile
+	/**
+	 * Insert new file.
+	 *
+ 	 * @param Google_DriveService $service Drive API service instance.
+	 * @param string $title Title of the file to insert, including the extension.
+	 * @param string $description Description of the file to insert.
+	 * @param string $parentId Parent folder's ID.
+	 * @param string $mimeType MIME type of the file to insert.
+	 * @param string $filename Filename of the file to insert.
+	 * @return Google_DriveFile The file that was inserted. NULL is returned if an API error occurred.
+	 */
+	function insertGoogleDriveFile($service, $title, $description, $parentId, $mimeType, $filename) {
+		$file = new Google_DriveFile();
+		$file->setTitle($title);
+		$file->setDescription($description);
+		$file->setMimeType($mimeType);
+
+		// Set the parent folder.
+		if ($parentId != null) {
+			$parent = new ParentReference();
+			$parent->setId($parentId);
+			$file->setParents(array($parent));
+		}
+
+		try {
+			$data = file_get_contents($filename);
+			$createdFile = $service->files->insert($file, array(
 											'data'     => $data,
 											'convert'  => true,
 											'mimeType' => $mimeType));
 
-				// Uncomment the following line to print the File ID
-				// print 'File ID: %s' % $createdFile->getId();
+			// Uncomment the following line to print the File ID
+			// print 'File ID: %s' % $createdFile->getId();
 
-				return $createdFile;
+			return $createdFile;
 
-			} catch (Exception $e) {
-				print "An error occurred: " . $e->getMessage();
-			}
+		} catch (Exception $e) {
+			print "An error occurred: " . $e->getMessage();
 		}
-		// }}}
+	}
+	// }}}
 
-		// {{{ downloadGoogleDriveFile
-		/**
-		 * Google Drive Download File
-		 */
-		function downloadGoogleDriveFile($service, $file) {
-			$downloadUrl = $file->exportLinks["application/pdf"];
-			if ($downloadUrl) {
-				$request = new Google_HttpRequest($downloadUrl, 'GET', null, null);
-				$httpRequest = Google_Client::$io->authenticatedRequest($request);
-				if ($httpRequest->getResponseHttpCode() == 200) {
-					return $httpRequest->getResponseBody();
-				} else {
-					// An error occurred.
-					return null;
-				}
+	// {{{ downloadGoogleDriveFile
+	/**
+	 * Google Drive Download File
+	 */
+	function downloadGoogleDriveFile($service, $file) {
+		$downloadUrl = $file->exportLinks["application/pdf"];
+		if ($downloadUrl) {
+			$request = new Google_HttpRequest($downloadUrl, 'GET', null, null);
+			$httpRequest = Google_Client::$io->authenticatedRequest($request);
+			if ($httpRequest->getResponseHttpCode() == 200) {
+				return $httpRequest->getResponseBody();
 			} else {
-				// The file doesn't have any content stored on Drive.
+				// An error occurred.
 				return null;
 			}
+		} else {
+			// The file doesn't have any content stored on Drive.
+			return null;
 		}
-		// }}}
+	}
+	// }}}
 
-		// {{{ updateRowOrder
-		function updateRowOrder() {
+	// {{{ updateRowOrder
+	function updateRowOrder() {
 
-			$orders = (!empty($_POST['orders'])) ? $_POST['orders'] : null;
-			if ($orders) {
-				foreach ($orders as $key => $order) {
-					$query = "update `" . $this->source . "` set `order` = " . $order["order"] . " where `id` = " . $order["id"];
-					$stmt  = $this->db->prepare($query);
-					$stmt->execute();
-				}
+		$orders = (!empty($_POST['orders'])) ? $_POST['orders'] : null;
+		if ($orders) {
+			foreach ($orders as $key => $order) {
+				$query = "update `" . $this->source . "` set `order` = " . $order["order"] . " where `id` = " . $order["id"];
+				$stmt  = $this->db->prepare($query);
+				$stmt->execute();
 			}
 		}
-		// }}}
+	}
+	// }}}
 };
 ?>
