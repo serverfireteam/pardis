@@ -1,15 +1,10 @@
 $(document).ready(function() {
 
+	var prevOrders = [];
+
 	$(function() {
 
-		var prevOrders  = [];
-
-		// find previous orders
-		$("tbody.sortable tr").each(function() {
-			rowIndex  = $(this).index() + 1;
-			prevOrder = $(this).find("input[name='order']").attr("value");
-			prevOrders[rowIndex] = prevOrder;
-		});
+		getPreviousOrders();
 
 		$(".draggable").draggable({
 			containment: "#containment-wrapper", scroll: false
@@ -22,17 +17,20 @@ $(document).ready(function() {
 		$(".sortable").sortable({
 			revert: true,
 			start: function(event, ui) {
+				pageNum     = $('.pagination a.number.current').html();
 				sourceId	= ui.item.find('a[name="delete"]').attr("row-id");
-				sourceIndex = ui.item.context.rowIndex;
+				sourceIndex = ((parseInt(pageNum) - 1) * 15) + ui.item.context.rowIndex;
 			},
 			stop: function(event, ui) {
+
 				var orders  = [];
-				targetIndex = ui.item.context.rowIndex;
+				pageNum     = $('.pagination a.number.current').html();
+				targetIndex = ((parseInt(pageNum) - 1) * 15) + ui.item.context.rowIndex;
 
 				if (targetIndex > sourceIndex) {
 
 					$("tbody.sortable tr").each(function() {
-						rowIndex = $(this).index() + 1;
+						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
 						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex >= sourceIndex && rowIndex < targetIndex) {
 							newOrder = prevOrders[rowIndex];
@@ -48,7 +46,7 @@ $(document).ready(function() {
 				} else if (targetIndex < sourceIndex) {
 
 					$("tbody.sortable tr").each(function() {
-						rowIndex = $(this).index() + 1;
+						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
 						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex > targetIndex && rowIndex <= sourceIndex) {
 							newOrder = prevOrders[rowIndex];
@@ -137,14 +135,18 @@ $(document).ready(function() {
 		$('#overflow').show();
 
 		$.get("?page="+page_name+"&action=pagging&start_limit="+start_limit, function(data) {
+
 			var items = "";
 			var input_id;
 
 			if (data != '' && data != null) {
 				items += data;
 			}
+
 			$('#tab1 table tbody').html(items);
 			$('#overflow').hide();
+
+			getPreviousOrders();
 		});
 	});
 
@@ -175,6 +177,16 @@ $(document).ready(function() {
 		$(this).parent().remove();
 	});
 
+	function getPreviousOrders() {
+		prevOrders = [];
+		// find previous orders
+		$("tbody.sortable tr").each(function() {
+			pageNum   = $('.pagination a.number.current').html();
+			rowIndex  = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
+			prevOrder = $(this).find("input[name='order']").attr("value");
+			prevOrders[rowIndex] = prevOrder;
+		});
+	}
 });
 
 function change_list() {

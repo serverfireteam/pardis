@@ -178,9 +178,9 @@ class field {
 		$group = $_GET['group'];
 		if ($group != '' or $group != 0) {
 			$where = ($_GET['group'] == '' or $_GET['group'] == 'last') ? '' : "where `$long_record_name` = $_GET[group]";
-			$q     = "select * from `$this->source` $where order by `order`";
+			$q     = "select * from `$this->source` $where order by `order` $this->kind_sort";
 		} else {
-			$q = "select * from `$this->source` order by `order`";
+			$q = "select * from `$this->source` order by `order` $this->kind_sort";
 		}
 
 		$r = $this->db->prepare($q);
@@ -266,18 +266,18 @@ class field {
 		if ($group != '') {
 			if ($long_record_name != '') {
 				$where   = ($_GET['group'] == '' or $_GET['group'] == 'last') ? '' : "where `$long_record_name` = $_GET[group]";
-				$myquery = "select * from `$this->source` $where order by `order` limit $start,$end";
+				$myquery = "select * from `$this->source` $where order by `order` $this->kind_sort limit $start,$end";
 			} else {
 				if (is_array($where)) {
 					$where_str = 'where '. join(" and ", $where);
 				}
-				$myquery = "select * from `$this->source` ".$condition." $where_str order by `order` limit $start,$end";
+				$myquery = "select * from `$this->source` ".$condition." $where_str order by `order` $this->kind_sort limit $start,$end";
 			}
 		} else {
 			if (is_array($where)) {
 				$where_str = 'where '. join(" and ", $where);
 			}
-			$myquery = "select * from `$this->source` $where_str order by `order` limit $start,$end";
+			$myquery = "select * from `$this->source` $where_str order by `order` $this->kind_sort limit $start,$end";
 		}
 
 		$stmt = $this->db->prepare($myquery);
@@ -1078,7 +1078,7 @@ class field {
 			$checkbox_fild_name = '';
 			$show_pardis		= '';
 
-			$myquery = "select * from `$this->source` order by `order`";
+			$myquery = "select * from `$this->source` order by `order` $this->kind_sort";
 			$r       = $this->db->prepare($myquery);
 			$r->execute();
 			$result = $r->fetchAll(PDO::FETCH_ASSOC);
