@@ -1,6 +1,6 @@
 <?php
 /***
-This version is for LG project only base on 0.3.0.2
+This version is for Pardis project only base on 0.3.0.2
 */
 
 class field {
@@ -1298,7 +1298,7 @@ class field {
 						 		'<img src="images/icons/hammer_screwdriver.png" alt="Edit" />' .
 						 		'</a>';
 				$show_pardis .= '</td>';
-				$show_pardis .=	'</tr>';
+				$show_pardis .= '</tr>';
 			}
 
 			if ($list_empty == true) {
@@ -1333,7 +1333,7 @@ class field {
 									'<a title="First Page"  href="#">« first</a>' .
 									'<a title="Previous Page" href="#">« pre</a>';
 					while ($i <= $count_records) {
-						if ($j==1) {
+						if ($j == 1) {
 							$show_pardis .= '<a class="number current" href="#">' . $j . '</a>';
 						} else {
 							$show_pardis .='<a class="number" href="#">' . $j . '</a>';
@@ -1380,7 +1380,7 @@ class field {
 							if ($this->field['type'][$n] == 'password') {
 							  	$this->field['value'][$n] = '';
 						    } else {
-						      	$this->field['value'][$n] = $row[$i];
+						    	$this->field['value'][$n] = $row[$i];
 							}
 						}
 					}
@@ -1407,7 +1407,7 @@ class field {
 				}
 
 		        $chek_empty       = false;
-				$chek_mail	 	  = true;
+				$chek_mail		  = true;
 				$count_type       = count($this->field['type']);
 				$count            = 1;
 				$strselet         = '';
@@ -1443,15 +1443,15 @@ class field {
 						$stick_after 	  = true;
 					}
 			 		if ($v == 'stick' && $this->field['name'][$i] != $stick_b && $this->field['name'][$i] == $this->field['option'][$i]) {
-						$stick[]     = $this->field['name'][$i];
-					    $stick_b     = $this->field['name'][$i];
-					    $check_stick = true;
-					    $stick_after = false;
+						$stick[] 	 = $this->field['name'][$i];
+						$stick_b 	 = $this->field['name'][$i];
+					  	$check_stick = true;
+					  	$stick_after = false;
 			    	}
 					if ($v == 'stick' && ($stick_b == '' || $this->field['option'][$i] == $stick_b)) {
 			  	    	$stick_value_temp .= $this->field['value'][$i].$_POST[$this->field['name'][$i]];
 				    	$stick_after 	   = false;
-			  	    }
+			  		}
 				}
 			    if ($check_stick == true) {
 					foreach ($stick as $ii => $value) {
@@ -1462,8 +1462,8 @@ class field {
 					$strupdate 		  = substr($strupdate, 1);
 					$strselect_where .= ' and ';
 					$strupdate 	     .= ' , ';
-			    }
-	            foreach ($this->field['type'] as $i => $v) {
+				}
+				foreach ($this->field['type'] as $i => $v) {
 					switch ($v) {
 						case ('submit') :
 							$count_type--;
@@ -1549,7 +1549,7 @@ class field {
 						 	}
 							if ($check_file == true) {
 								if ($count < $count_type) {
-									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $file . '\' ':
+									$strselect_where .= ($strselect_where) ? ' and `' . $this->field['name'][$i] . '`=\'' . $file . '\' ' :
 											    		' `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
 									$strupdate 		 .= ($strupdate) ? ' , `' . $this->field['name'][$i] . '`=\'' . $file . '\' ' :
 													    ' `' . $this->field['name'][$i] . '`=\'' . $file . '\' ';
@@ -1570,7 +1570,7 @@ class field {
 							$utf->execute();
 							$temp = $this->field['name'][$i];
 							if ($_POST[$temp] != '') {
-								$tags 	    = '';
+								$tags       = '';
 								$table_name = $this->source;
 								foreach ($_POST[$temp] as $key => $value) {
 									$query_all_tag = "select * from `tag` where `table_name`= '" . $table_name . "'  and `name`='" . $value . "'";
@@ -1581,10 +1581,10 @@ class field {
 										$tags .= $re_tag['id'];
 										if ($value != end($_POST[$temp])) {
 											$tags .= ',';
-										}									
+										}
 									} else {
-										$query_tag = "insert into `tag` (`name`,`table_name`) values ('" . $value . "','" . $table_name . "')";
-										$insert_tag  = $this->db->prepare($query_tag);
+										$query_tag  = "insert into `tag` (`name`,`table_name`) values ('" . $value . "','" . $table_name . "')";
+										$insert_tag = $this->db->prepare($query_tag);
 										$insert_tag->execute();
 										$tags .= $this->db->lastInsertId();
 										if ($value != end($_POST[$temp])) {
@@ -1646,7 +1646,7 @@ class field {
 												$user 		 = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
 										    }
 										}
-										if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {											   
+										if ($v == 'text' and $this->array_member[$this->field['name'][$i]] == 'control') {
 											$user_select = $this->field['name'][$i];
 											$user 		 = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
 										}
@@ -1669,7 +1669,7 @@ class field {
 									$temp 	   = $this->field['name'][$i];
 									if ($v == 'password') {
 										$is_account 	  = true;
-										$strupdate 		 .= ($strupdate) ?
+										$strupdate  	 .= ($strupdate) ?
 														    ' , `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ' :
 														    ' `' . $this->field['name'][$i] . '`=\'' . md5(md5($_POST[$temp] . 'hash password') . 'w1e3c3') . '\' ';
 										$strselect_where .= ($strselect_where) ?
@@ -1682,7 +1682,7 @@ class field {
 											if ($chek_mail == false) {
 												$this->error .= 'Please enter a valid email address. <a href="javascript:history.back(-1);">Back</a>';
 											} else if (strcmp($temp, 'username') == 0) {
-										    	$user_select = $this->field['name'][$i];
+												$user_select = $this->field['name'][$i];
 												$user 	     = '`' . $this->field['name'][$i] . '`=\'' . $_POST[$temp] . '\'';
 											}
 										}
@@ -1732,7 +1732,7 @@ class field {
 								$utf = $this->db->prepare('SET NAMES utf8');
 								$utf->execute();
 								if ($is_account == true) {
-						        	$m_query = "select " . $user_select . " from $this->source where " . $user . " AND `id` != :id";
+									$m_query = "select " . $user_select . " from $this->source where " . $user . " AND `id` != :id";
 									$stmt    = $this->db->prepare($m_query);
 									$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 									$stmt->execute();
@@ -1747,10 +1747,10 @@ class field {
 										$bool = $stmt->execute();
 										if ($bool == 1) {
 											$this->successfull .= 'The record was updated successfully. <a href="javascript:history.go(-2);">Back</a>';
-								    	} else {
+										} else {
 									   		$this->error .= 'Unfortunately it is not possible to update this record. <a href="javascript:history.back(-1);">Back</a>';
 										}
-								    }
+									 }
 								} else {
 							    	$myquery = "update `$this->source` set $strupdate where `id`='$id'";
 								 	$stmt    = $this->db->prepare($myquery);
@@ -1758,7 +1758,7 @@ class field {
 								    if ($bool == 1) {
 										$this->successfull .= 'The record was updated successfully. <a href="javascript:history.go(-2);">Back</a>';
 								    } else {
-								 		$this->error .= 'Unfortunately it is not possible to update this record. <a href="javascript:history.back(-1);">Back</a>';
+										$this->error .= 'Unfortunately it is not possible to update this record. <a href="javascript:history.back(-1);">Back</a>';
 									}
 							    }
 							}
@@ -1807,7 +1807,7 @@ class field {
 
 		$myquery = "delete from `$this->source` where " . $where;
 		$stmt    = $this->db->prepare($myquery);
-   		$bool 	  = $stmt->execute();
+   		$bool    = $stmt->execute();
 		if ($bool == 1) {
 			if ($_GET['method'] == 'ajax') {
 		    	echo 'The record was successfully deleted.';
