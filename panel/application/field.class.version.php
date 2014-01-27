@@ -1077,6 +1077,7 @@ class field {
 			$long_record_name   = '';
 			$checkbox_fild_name = '';
 			$show_pardis		= '';
+			$list_empty 		= true;
 
 			$myquery = "select * from `$this->source` order by `order` $this->kind_sort";
 			$r       = $this->db->prepare($myquery);
@@ -1128,7 +1129,10 @@ class field {
 			$stmt->bindParam(':condition', $condition, PDO::PARAM_INT);
 			$stmt->execute();
 
-			$list_empty = true;
+			if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+				$list_empty = false;
+			}
+
 			$drop       = array();
 			$drop_idx   = array();
 			foreach ($this->field['type'] as $i => $val) {
@@ -1228,128 +1232,135 @@ class field {
 			$show_pardis .= '<div class="tab-content default-tab" id="tab1">' .
 							'<div class="notification information png_bg">' .
 							'<a href="#" class="close"><img src="images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>' .
-							'<div>Here you can see the last record, you can delete, edit records have.</div>' .
+							'<div>';
+
+			if ($list_empty == false) {
+				$show_pardis .= 'Here you can see the list of records and you can edit and delete them.';
+			} else if ($list_empty == true) {
+				$show_pardis .= 'The list is empty !';
+			}
+
+			$show_pardis .= '</div>' .
 							'</div>' .
 							'<div id="overflow" style="display:none"><div id="loading" align="center" ><img src="images/loading-icon.gif"/></div>' .
 							'</div><div class="clearfix"></div>';
 
-			$show_pardis .= '<table><thead><tr class="ui-sortable"><th></th><th><input class="check-all" type="checkbox" /></th>';
+			if ($list_empty == false) {
+				$show_pardis .= '<table><thead><tr class="ui-sortable"><th></th><th><input class="check-all" type="checkbox" /></th>';
 
-			foreach ($idex_arr as $i => $t) {
-				if ($check_show_img == true && $name_img === $arr[$i]) {
-					$show_pardis    .= '<th>Display Image</th>';
-					$check_show_img  = false;
-					$img_idx 	     = $i;
-					$check_img       = true;
-				} else {
-				  	$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
+				foreach ($idex_arr as $i => $t) {
+					if ($check_show_img == true && $name_img === $arr[$i]) {
+						$show_pardis    .= '<th>Display Image</th>';
+						$check_show_img  = false;
+						$img_idx 	     = $i;
+						$check_img       = true;
+					} else {
+					  	$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
+					}
 				}
-			}
-			foreach ($drop_idx as $i => $t) {
-				$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
-			}
 
-			$show_pardis .= '<th>tools</th></tr></thead><tbody class="sortable">';
+				foreach ($drop_idx as $i => $t) {
+					$show_pardis .= '<th>' . $this->field['label'][$t] . '</th>';
+				}
 
-			while ($re = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				$list_empty   = false;
-				$show_pardis .= '<tr>';
-				$show_pardis .= '<input type="hidden" name="order" value="' . $re['order'] . '" />';
-				$show_pardis .= '<td><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>';
-				$show_pardis .= '<td><input type="checkbox" checkbox-id="' . $re['id'] . '" /></td>';
-				foreach ($arr as $i => $v) {
-					foreach ($re as $ii => $value) {
-						if ($v === $ii) {
-							if ($check_img == true && $i == $img_idx && $value != '') {
-								$show_pardis .= '<td><img name="kk" src="' . img::check_img('../' . $value, 100, 100, '../resize/') .
-												'" width="100px" height="100px"/></td>';
-							} else {
-								if (strlen($value) > 100) {
-									$show_pardis .= '<td>' . substr(strip_tags($value), 0, 100) . '...' . '</td>';
+				$show_pardis .= '<th>tools</th></tr></thead><tbody class="sortable">';
+
+				while ($re = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$show_pardis .= '<tr>';
+					$show_pardis .= '<input type="hidden" name="order" value="' . $re['order'] . '" />';
+					$show_pardis .= '<td><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>';
+					$show_pardis .= '<td><input type="checkbox" checkbox-id="' . $re['id'] . '" /></td>';
+					foreach ($arr as $i => $v) {
+						foreach ($re as $ii => $value) {
+							if ($v === $ii) {
+								if ($check_img == true && $i == $img_idx && $value != '') {
+									$show_pardis .= '<td><img name="kk" src="' . img::check_img('../' . $value, 100, 100, '../resize/') .
+													'" width="100px" height="100px"/></td>';
 								} else {
-									$show_pardis .= '<td>' . $value . '</td>';
-								}
-							}
-						}
-					}
-				}
-
-				foreach ($drop as $i => $v) {
-					foreach ($re as $ii => $value) {
-						if ($v === $ii) {
-							foreach ($this->array_member[$ii] as $iii => $valu) {
-								if ($iii == $value) {
-									if (strlen($valu) > 100) {
-										$value = substr(strip_tags($valu), 0, 100) . '...';
+									if (strlen($value) > 100) {
+										$show_pardis .= '<td>' . substr(strip_tags($value), 0, 100) . '...' . '</td>';
+									} else {
+										$show_pardis .= '<td>' . $value . '</td>';
 									}
-									$show_pardis .= '<td>' . $valu . '</td>';
 								}
 							}
 						}
 					}
-				}
 
-				$show_pardis .= '<td>';
-				$show_pardis .= '<a page="' . $_GET['page'] . '" row-id="' . $re['id'] . '" name="delete" href="?page=' . $_GET['page'] .
-								'&id=' . $re['id'] . '&action=show_delete" title="Delete">' .
-						 	    '<img src="images/icons/cross.png" alt="Delete" />' .
-						 		'</a>' .
-						 		'<a name="update" href="?page=' . $_GET['page'] . '&id=' . $re['id'] . '&action=show_update" title="Edit Meta">' .
-						 		'<img src="images/icons/hammer_screwdriver.png" alt="Edit" />' .
-						 		'</a>';
-				$show_pardis .= '</td>';
-				$show_pardis .= '</tr>';
-			}
-
-			if ($list_empty == true) {
-				$this->error .= 'Sorry, no records to display.';
-			}
-
-			if ($checkbox_fild_name != '') {
-				$checkbox_key = array_search($checkbox_fild_name, $this->field['name']);
-				foreach ($this->array_member[$checkbox_fild_name] as $key => $value) {
-					$show_pardis .= '<a page="' . $_GET['page'] . '" key="' . $checkbox_key . '" value="' . $key .
-								    '" class="checkbox button ui-corner-all-state-default" href="#"><span>' . $value . '</span> list selectet items </a>';
-				}
-			}
-
-			$show_pardis .= '</tbody>' .
-							'<tfoot>' .
-							'<tr>' .
-							'<td colspan="7">' .
-							'<div class="bulk-actions align-left">' .
-							'<select name="dropdown">' .
-							'<option value="option1">Please select an option</option>' .
-							'<option value="delete">Delete</option>' .
-							'</select>' .
-							'<a href="#" class="button">Do</a>' .
-							'</div>';
-
-			if ($count_records != '') {
-				if ($count_records > 15) {
-					$j = 1;
-					$i = 1;
-					$show_pardis .= '<div class="pagination">' .
-									'<a title="First Page"  href="#">« first</a>' .
-									'<a title="Previous Page" href="#">« pre</a>';
-					while ($i <= $count_records) {
-						if ($j == 1) {
-							$show_pardis .= '<a class="number current" href="#">' . $j . '</a>';
-						} else {
-							$show_pardis .='<a class="number" href="#">' . $j . '</a>';
+					foreach ($drop as $i => $v) {
+						foreach ($re as $ii => $value) {
+							if ($v === $ii) {
+								foreach ($this->array_member[$ii] as $iii => $valu) {
+									if ($iii == $value) {
+										if (strlen($valu) > 100) {
+											$value = substr(strip_tags($valu), 0, 100) . '...';
+										}
+										$show_pardis .= '<td>' . $valu . '</td>';
+									}
+								}
+							}
 						}
-						$i = $i + 15;
-						$j++;
 					}
-					$show_pardis .= '<a title="Next Page" href="#">next »</a>' .
-								    '<a title="Last Page" href="#">last »</a>' .
-									'</div> <!-- End .pagination -->';
+
+					$show_pardis .= '<td>';
+					$show_pardis .= '<a page="' . $_GET['page'] . '" row-id="' . $re['id'] . '" name="delete" href="?page=' . $_GET['page'] .
+									'&id=' . $re['id'] . '&action=show_delete" title="Delete">' .
+							 	    '<img src="images/icons/cross.png" alt="Delete" />' .
+							 		'</a>' .
+							 		'<a name="update" href="?page=' . $_GET['page'] . '&id=' . $re['id'] . '&action=show_update" title="Edit Meta">' .
+						 			'<img src="images/icons/hammer_screwdriver.png" alt="Edit" />' .
+						 			'</a>';
+					$show_pardis .= '</td>';
+					$show_pardis .= '</tr>';
 				}
+
+				if ($checkbox_fild_name != '') {
+					$checkbox_key = array_search($checkbox_fild_name, $this->field['name']);
+					foreach ($this->array_member[$checkbox_fild_name] as $key => $value) {
+						$show_pardis .= '<a page="' . $_GET['page'] . '" key="' . $checkbox_key . '" value="' . $key .
+									    '" class="checkbox button ui-corner-all-state-default" href="#"><span>' . $value . '</span> list selectet items </a>';
+					}
+				}
+
+				$show_pardis .= '</tbody>' .
+								'<tfoot>' .
+								'<tr>' .
+								'<td colspan="7">' .
+								'<div class="bulk-actions align-left">' .
+								'<select name="dropdown">' .
+								'<option value="option1">Please select an option</option>' .
+								'<option value="delete">Delete</option>' .
+								'</select>' .
+								'<a href="#" class="button">Do</a>' .
+								'</div>';
+
+				if ($count_records != '') {
+					if ($count_records > 15) {
+						$j = 1;
+						$i = 1;
+						$show_pardis .= '<div class="pagination">' .
+										'<a title="First Page"  href="#">« first</a>' .
+										'<a title="Previous Page" href="#">« pre</a>';
+						while ($i <= $count_records) {
+							if ($j == 1) {
+								$show_pardis .= '<a class="number current" href="#">' . $j . '</a>';
+							} else {
+								$show_pardis .='<a class="number" href="#">' . $j . '</a>';
+							}
+							$i = $i + 15;
+							$j++;
+						}
+						$show_pardis .= '<a title="Next Page" href="#">next »</a>' .
+									    '<a title="Last Page" href="#">last »</a>' .
+										'</div> <!-- End .pagination -->';
+					}
+				}
+
+				$show_pardis .= '<div class="clear"></div>' .
+								'</td></tr>' .
+								'</tfoot></table>';
 			}
 
-			$show_pardis .= '<div class="clear"></div>' .
-							'</td></tr>' .
-							'</tfoot></table>';
 			$show_pardis .= '</div>';
 
 			return $show_pardis;
