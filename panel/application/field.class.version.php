@@ -1129,12 +1129,12 @@ class field {
 			$stmt->bindParam(':condition', $condition, PDO::PARAM_INT);
 			$stmt->execute();
 
-			if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+			if ($count_records != 0) {
 				$list_empty = false;
 			}
 
-			$drop       = array();
-			$drop_idx   = array();
+			$drop     = array();
+			$drop_idx = array();
 			foreach ($this->field['type'] as $i => $val) {
 				switch ($val) {
 					case ('submit') :
