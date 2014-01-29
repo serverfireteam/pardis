@@ -17,20 +17,20 @@ $(document).ready(function() {
 		$(".sortable").sortable({
 			revert: true,
 			start: function(event, ui) {
-				pageNum     = $('.pagination a.number.current').html();
+				pageNum     = ($('.pagination a.number.current').length) ? $('.pagination a.number.current').html() : 1;
 				sourceId	= ui.item.find('a[name="delete"]').attr("row-id");
 				sourceIndex = ((parseInt(pageNum) - 1) * 15) + ui.item.context.rowIndex;
 			},
 			stop: function(event, ui) {
 
 				var orders  = [];
-				pageNum     = $('.pagination a.number.current').html();
+				pageNum     = ($('.pagination a.number.current').html()) ? $('.pagination a.number.current').html() : 1;
 				targetIndex = ((parseInt(pageNum) - 1) * 15) + ui.item.context.rowIndex;
 
 				if (targetIndex > sourceIndex) {
 
 					$("tbody.sortable tr").each(function() {
-						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
+						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index("tbody.sortable tr") + 1;
 						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex >= sourceIndex && rowIndex < targetIndex) {
 							newOrder = prevOrders[rowIndex];
@@ -46,7 +46,7 @@ $(document).ready(function() {
 				} else if (targetIndex < sourceIndex) {
 
 					$("tbody.sortable tr").each(function() {
-						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
+						rowIndex = ((parseInt(pageNum) - 1) * 15) + $(this).index("tbody.sortable tr") + 1;
 						rowId	 = $(this).find('a[name="delete"]').attr("row-id");
 						if (rowIndex > targetIndex && rowIndex <= sourceIndex) {
 							newOrder = prevOrders[rowIndex];
@@ -181,8 +181,8 @@ $(document).ready(function() {
 		prevOrders = [];
 		// find previous orders
 		$("tbody.sortable tr").each(function() {
-			pageNum   = $('.pagination a.number.current').html();
-			rowIndex  = ((parseInt(pageNum) - 1) * 15) + $(this).index() + 1;
+			pageNum   = ($('.pagination a.number.current').html()) ? $('.pagination a.number.current').html() : 1;
+			rowIndex  = ((parseInt(pageNum) - 1) * 15) + $(this).index("tbody.sortable tr") + 1;
 			prevOrder = $(this).find("input[name='order']").attr("value");
 			prevOrders[rowIndex] = prevOrder;
 		});
